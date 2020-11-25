@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import useGlobalStore from "./lib/useGlobalStore";
 import globalStore from './store/globalStore';
 
