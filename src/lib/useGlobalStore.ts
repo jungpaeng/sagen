@@ -13,7 +13,6 @@ const useGlobalStore = <T = any>(
   CreateStoreReturnValue<T>["setValue"],
   T,
 ] => {
-  const prevValue = React.useRef(store.getValue());
   const [value, setValue] = React.useState(store.getValue());
 
   const selectedValue = React.useCallback((value: T) => (
@@ -23,8 +22,7 @@ const useGlobalStore = <T = any>(
   React.useEffect(() => {
     // change callback
     const valueChange = store.onChange((newVal: T) => {
-      console.log('change on effect');
-      if (!equalityFn(selectedValue(newVal), selectedValue(prevValue.current))) {
+      if ( !equalityFn( selectedValue(newVal), selectedValue(store.getPrevValue()) ) ) {
         setValue(newVal);
       }
     });
@@ -32,11 +30,7 @@ const useGlobalStore = <T = any>(
     return valueChange;
   }, [selectedValue, equalityFn, store]);
 
-  React.useEffect(() => {
-    prevValue.current = value;
-  }, [value]);
-
-  return [ selectedValue(value), store.setValue, prevValue.current ];
+  return [ selectedValue(value), store.setValue, store.getPrevValue() ];
 };
 
 export default useGlobalStore;
