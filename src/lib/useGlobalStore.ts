@@ -1,12 +1,15 @@
 import React from "react";
 import {CreateStoreReturnValue} from "./createStore";
 
-const useGlobalStore = (store: CreateStoreReturnValue<any>) => {
+const useGlobalStore = <T = any>(store: CreateStoreReturnValue<T>): [
+  ReturnType<CreateStoreReturnValue<T>["getValue"]>,
+  CreateStoreReturnValue<T>["setValue"],
+] => {
   const [value, setValue] = React.useState(store.getValue());
 
   React.useEffect(() => {
     // change callback
-    const valueChange = store.onChange((newVal: any) => {
+    const valueChange = store.onChange((newVal: T) => {
       setValue(newVal);
     });
 
