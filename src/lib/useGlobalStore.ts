@@ -13,7 +13,7 @@ const useGlobalStore = <T = any>(
   CreateStoreReturnValue<T>["setValue"],
   T,
 ] => {
-  const [value, setValue] = React.useState(store.getValue());
+  const [, forceUpdate] = React.useReducer(curr => curr + 1, 0) as [never, () => void]
 
   const selectedValue = React.useCallback((value: T) => (
     selector ? selector(value) : value
@@ -23,14 +23,14 @@ const useGlobalStore = <T = any>(
     // change callback
     const valueChange = store.onChange((newVal: T) => {
       if ( !equalityFn( selectedValue(newVal), selectedValue(store.getPrevValue()) ) ) {
-        setValue(newVal);
+        forceUpdate();
       }
     });
 
     return valueChange;
   }, [selectedValue, equalityFn, store]);
 
-  return [ selectedValue(value), store.setValue, store.getPrevValue() ];
+  return [ selectedValue(store.getValue()), store.setValue, store.getPrevValue() ];
 };
 
 export default useGlobalStore;
