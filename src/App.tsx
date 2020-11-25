@@ -2,11 +2,11 @@ import React from 'react';
 import useGlobalStore from "./lib/useGlobalStore";
 import globalStore from './store/globalStore';
 
+const numberSelector = (state: { num: number }) => state.num;
+const stringSelector = (state: { str: string }) => state.str;
+
 const NumberChild = () => {
-  const [num, setValue, prevValue] = useGlobalStore(
-    globalStore,
-    React.useCallback(state => state.num, []),
-  );
+  const [num, setValue, prevValue] = useGlobalStore(globalStore, numberSelector);
 
   const handleClickBtn = React.useCallback(() => {
     setValue((curr) => ({
@@ -27,10 +27,7 @@ const NumberChild = () => {
 }
 
 const StringChild = () => {
-  const [str] = useGlobalStore(
-    globalStore,
-    React.useCallback(state => state.str, []),
-  );
+  const [str] = useGlobalStore(globalStore, stringSelector);
 
   return (
     <div className="App">
