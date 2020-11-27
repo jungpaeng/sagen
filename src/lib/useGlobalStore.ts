@@ -10,27 +10,27 @@ const useGlobalStore = <T = any>(
   equalityFn: EqualityFunction<T> = defaultEqualityFn,
 ): [
   T,
-  CreateStoreReturnValue<T>["setValue"],
+  CreateStoreReturnValue<T>["setState"],
   T,
 ] => {
-  const [, forceUpdate] = React.useReducer(curr => curr + 1, 0) as [never, () => void]
+  const [, forceUpdate] = React.useReducer((curr: number) => curr + 1, 0) as [never, () => void]
 
-  const selectedValue = React.useCallback((value: T) => (
+  const selectedState = React.useCallback((value: T) => (
     selector ? selector(value) : value
   ), [selector]);
 
   React.useEffect(() => {
     // change callback
-    const valueChange = store.onChange((newVal: T) => {
-      if ( !equalityFn( selectedValue(newVal), selectedValue(store.getPrevValue()) ) ) {
+    const stateChange = store.onChange((newVal: T) => {
+      if ( !equalityFn( selectedState(newVal), selectedState(store.getPrevState()) ) ) {
         forceUpdate();
       }
     });
 
-    return valueChange;
-  }, [selectedValue, equalityFn, store]);
+    return stateChange;
+  }, [selectedState, equalityFn, store]);
 
-  return [ selectedValue(store.getValue()), store.setValue, store.getPrevValue() ];
+  return [ selectedState(store.getState()), store.setState, store.getPrevState() ];
 };
 
 export default useGlobalStore;

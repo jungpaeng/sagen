@@ -1,33 +1,28 @@
 type SetValueFunction<T = any> = (currValue: T) => T;
 
 export interface CreateStoreReturnValue<T> {
-  getPrevValue: () => T;
-  getValue: () => T;
-  setValue: (newValue: T | SetValueFunction<T>) => void;
+  getPrevState: () => T;
+  getState: () => T;
+  setState: (newValue: T | SetValueFunction<T>) => void;
   onChange: (callback: (newValue: T) => void) => void;
 }
 
-const createStore = <T = any>(defaultValue: T): CreateStoreReturnValue<T> => {
+const createStore = <T = any>(defaultState: T): CreateStoreReturnValue<T> => {
   const callbackList: Array<(newValue: T) => void> = [];
-  let value = defaultValue;
-  let prevValue = defaultValue;
+  let state = defaultState;
+  let prevState = defaultState;
 
-  const getPrevValue = () => {
-    return prevValue;
+  const getPrevState = () => prevState;
+  const getState = () => state;
+
+  const setState = (nextState: T | SetValueFunction<T>) => {
+    prevState = state;
+    state = typeof nextState === "function" ? (nextState as Function)(state) : nextState;
+    callbackList.forEach((callback) => callback(state));
   };
 
-  const getValue = () => {
-    return value;
-  };
-
-  const setValue = (newValue: T | SetValueFunction<T>) => {
-    prevValue = value;
-    value = typeof newValue === "function" ? (newValue as Function)(value) : newValue;
-    callbackList.forEach((callback) => callback(value));
-  };
-
-  // value changed callback
-  const onChange = (callback: (newValue: any) => void) => {
+  // state changed callback
+  const onChange = (callback: (nextState: any) => void) => {
     callbackList.push(callback);
 
     return () => {
@@ -36,7 +31,7 @@ const createStore = <T = any>(defaultValue: T): CreateStoreReturnValue<T> => {
     };
   };
 
-  return { getPrevValue, getValue, setValue, onChange };
+  return { getPrevState, getState, setState, onChange };
 };
 
 export default createStore;
