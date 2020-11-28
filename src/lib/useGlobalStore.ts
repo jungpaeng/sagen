@@ -1,5 +1,5 @@
 import React from "react";
-import {CreateStoreReturnValue} from "./createStore";
+import { CreateStoreReturnValue } from "./store";
 
 type EqualityFunction<T> = (prev: T, next: T) => boolean;
 const defaultEqualityFn = (prev: any, next: any) => prev === next;

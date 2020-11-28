@@ -1,4 +1,15 @@
-import createStore, {CreateStoreReturnValue} from './createStore';
+import createStore, { CreateStoreReturnValue } from './createStore';
+
+export function testReducer(state: number, action: ReducerAction) {
+  switch (action.type) {
+    case 'INCREMENT':
+      return state + 1;
+    case 'DECREMENT':
+      return state - 1;
+    default:
+      return state;
+  }
+}
 
 interface ReducerAction {
   type: string;
