@@ -1,12 +1,26 @@
 import React from 'react';
 import useGlobalStore from "./lib/useGlobalStore";
 import globalStore from './store/globalStore';
+import {createStore, redux} from './lib/store';
+
+export function testReducer(state: number, action: any) {
+  switch (action.type) {
+    case 'INCREMENT':
+      return state + 1;
+    case 'DECREMENT':
+      return state - 1;
+    default:
+      return state;
+  }
+}
+
+const reduxStore = createStore(redux(testReducer, 0));
 
 const numberSelector = (state: { num: number }) => state.num;
 const stringSelector = (state: { str: string }) => state.str;
 
 const NumberChild = () => {
-  const [num, setValue, prevValue] = useGlobalStore(globalStore, numberSelector);
+  const [num, setValue] = useGlobalStore(globalStore, numberSelector);
 
   const handleClickBtn = React.useCallback(() => {
     setValue((curr) => ({
@@ -18,7 +32,6 @@ const NumberChild = () => {
   return (
     <div className="App">
       <p>number: {num}</p>
-      <p>temp number: {prevValue.num}</p>
       <button onClick={handleClickBtn}>
         Click
       </button>
@@ -37,8 +50,18 @@ const StringChild = () => {
 }
 
 function App() {
+  const [state, dispatch] = useGlobalStore(reduxStore);
+  console.log(state);
+
   return (
     <div className="App">
+      <p>state: {state}</p>
+      <button onClick={() => {
+        // @ts-ignore
+        dispatch({type: 'INCREMENT'});
+      }}>
+        ClickMe
+      </button>
       <NumberChild />
       <StringChild />
     </div>

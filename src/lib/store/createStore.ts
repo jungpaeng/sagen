@@ -3,28 +3,24 @@ export type StoreGetState<T = any> = () => T;
 export type StoreSetState<T = any> = (newValue: T | SetValueFunction<T>) => void;
 
 export interface CreateStoreReturnValue<T> {
-  getPrevState: () => T;
   getState: StoreGetState<T>;
   setState: StoreSetState<T>;
-  onChange: (callback: (newValue: T) => void) => void;
+  onChange: (callback: (newState: T, prevState: T) => void) => void;
 }
 
 const createStore = <T = any>(createState: T): CreateStoreReturnValue<T> => {
-  const callbackList: Array<(newValue: T) => void> = [];
-  let state = createState;
-  let prevState = createState;
+  let state: T;
+  const callbackList: Array<(newState: T, prevState: T) => void> = [];
 
-  const getPrevState = () => prevState;
   const getState = () => state;
-
   const setState = (nextState: T | SetValueFunction<T>) => {
-    prevState = state;
+    const prevState = state;
     state = typeof nextState === "function" ? (nextState as Function)(state) : nextState;
-    callbackList.forEach((callback) => callback(state));
+    callbackList.forEach((callback) => callback(state, prevState));
   };
 
   // state changed callback
-  const onChange = (callback: (nextState: any) => void) => {
+  const onChange = (callback: (nextState: any, prevState: any) => void) => {
     callbackList.push(callback);
 
     return () => {
@@ -33,7 +29,16 @@ const createStore = <T = any>(createState: T): CreateStoreReturnValue<T> => {
     };
   };
 
-  return { getPrevState, getState, setState, onChange };
+  if (typeof createState === "function") {
+    const {dispatch, state: reduceState} = createState(getState, setState);
+    state = reduceState;
+
+    // @ts-ignore
+    return {getState, setState, onChange, dispatch};
+  } else {
+    state = createState;
+    return { getState, setState, onChange };
+  }
 };
 
 export default createStore;
