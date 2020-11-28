@@ -1,4 +1,4 @@
-import createStore, { CreateStoreReturnValue } from './createStore';
+import { CreateStoreReturnValue, StoreGetState, StoreSetState } from './index';
 
 export function testReducer(state: number, action: ReducerAction) {
   switch (action.type) {
@@ -23,13 +23,15 @@ interface ReducerReturnType<T> {
 
 type ReducerFunction<T> = (state: T, action: ReducerAction) => T;
 
-const createReduceStore = <T = any>(reducer: ReducerFunction<T>, defaultState: T): ReducerReturnType<T> => {
-  const store = createStore(defaultState);
-  const dispatch = (action: ReducerAction) => {
-    store.setState(reducer(store.getState(), action));
-  };
+const redux = <T = any>(reducer: ReducerFunction<T>, defaultState: T) => {
+  return (getState: StoreGetState<T>, setState: StoreSetState<T>) => {
+    const dispatch = (action: ReducerAction) => {
+      setState(state => reducer(state, action));
+    };
 
-  return { store, dispatch };
+    setState(defaultState);
+    return { dispatch };
+  }
 };
 
-export default createReduceStore;
+export default redux;

@@ -1,16 +1,18 @@
 type SetValueFunction<T = any> = (currValue: T) => T;
+export type StoreGetState<T = any> = () => T;
+export type StoreSetState<T = any> = (newValue: T | SetValueFunction<T>) => void;
 
 export interface CreateStoreReturnValue<T> {
   getPrevState: () => T;
-  getState: () => T;
-  setState: (newValue: T | SetValueFunction<T>) => void;
+  getState: StoreGetState<T>;
+  setState: StoreSetState<T>;
   onChange: (callback: (newValue: T) => void) => void;
 }
 
-const createStore = <T = any>(defaultState: T): CreateStoreReturnValue<T> => {
+const createStore = <T = any>(createState: T): CreateStoreReturnValue<T> => {
   const callbackList: Array<(newValue: T) => void> = [];
-  let state = defaultState;
-  let prevState = defaultState;
+  let state = createState;
+  let prevState = createState;
 
   const getPrevState = () => prevState;
   const getState = () => state;
