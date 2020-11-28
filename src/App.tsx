@@ -23,7 +23,7 @@ const NumberChild = () => {
   const [num, setValue] = useGlobalStore(globalStore, numberSelector);
 
   const handleClickBtn = React.useCallback(() => {
-    setValue((curr) => ({
+    setValue((curr: any) => ({
       ...curr,
       num: curr.num + 1
     }));

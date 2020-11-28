@@ -1,5 +1,5 @@
 import React from "react";
-import { CreateStoreReturnValue } from "./store";
+import {CreateStoreReducerReturnValue, CreateStoreReturnValue } from "./store";
 
 type EqualityFunction<T> = (prev: T, next: T) => boolean;
 const defaultEqualityFn = (prev: any, next: any) => prev === next;
@@ -8,7 +8,7 @@ const useGlobalStore = <T = any>(
   store: CreateStoreReturnValue<T>,
   selector?: (value: T) => any,
   equalityFn: EqualityFunction<T> = defaultEqualityFn,
-): [ T, CreateStoreReturnValue<T>["setState"] ] => {
+): [ T, (state: any) => any ] => {
   const [, forceUpdate] = React.useReducer((curr: number) => curr + 1, 0) as [never, () => void]
   const selectedState = React.useCallback((value: T) => (
     selector ? selector(value) : value
@@ -25,8 +25,7 @@ const useGlobalStore = <T = any>(
     return stateChange;
   }, [selectedState, equalityFn, store]);
 
-  // @ts-ignore
-  return [ selectedState(store.getState()), store.dispatch || store.setState ];
+  return [ selectedState(store.getState()), (store as CreateStoreReducerReturnValue<T>).dispatch || store.setState ];
 };
 
 export default useGlobalStore;

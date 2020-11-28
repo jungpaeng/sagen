@@ -5,12 +5,20 @@ interface ReducerAction {
   [key: string]: any;
 }
 
-type ReducerFunction<T> = (state: T, action: ReducerAction) => T;
+interface ReducerStore<T> {
+  state: T;
+  dispatch: DispatchType;
+}
 
-const redux = <T = any>(reducer: ReducerFunction<T>, defaultState: T) => (
-  getState: StoreGetState<T>,
-  setState: StoreSetState<T>,
-) => {
+
+export type DispatchType = (action: ReducerAction) => void;
+export type ReducerFunction<T> = (state: T, action: ReducerAction) => T;
+export type ReducerReturnType<T> = (getState: StoreGetState<T>, setState: StoreSetState<T>) => ReducerStore<T>;
+
+const redux = <T = any>(reducer: ReducerFunction<T>, defaultState: T): ReducerReturnType<T> => (
+  getState,
+  setState,
+): ReducerStore<T> => {
   const dispatch = (action: ReducerAction) => {
     setState(state => {
       return reducer(state, action)
