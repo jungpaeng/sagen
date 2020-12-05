@@ -1,4 +1,4 @@
-import {ReducerReturnType } from ".";
+import {ReducerReturnType } from "../middleware";
 
 type SetValueFunction<T = any> = (currValue: T) => T;
 export type StoreGetState<T = any> = () => T;

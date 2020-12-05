@@ -1,4 +1,4 @@
-import { StoreGetState, StoreSetState } from './index';
+import { StoreGetState, StoreSetState } from '../store';
 
 interface ReducerAction {
   type: string;
