@@ -1,5 +1,5 @@
 import React from "react";
-import {CreateStoreReducerReturnValue, CreateStoreReturnValue } from "./store";
+import {CreateStoreReturnValue } from "./store";
 
 type EqualityFunction<T> = (prev: T, next: T) => boolean;
 const defaultEqualityFn = (prev: any, next: any) => prev === next;
@@ -14,6 +14,10 @@ const useGlobalStore = <T = any>(
     selector ? selector(value) : value
   ), [selector]);
 
+  const handleChangeState = React.useMemo(() => {
+    return store.customSetState || store.setState
+  }, [store]);
+
   React.useEffect(() => {
     // change callback
     const stateChange = store.onChange((newState: T, prevState: T) => {
@@ -25,7 +29,7 @@ const useGlobalStore = <T = any>(
     return stateChange;
   }, [selectedState, equalityFn, store]);
 
-  return [ selectedState(store.getState()), (store as CreateStoreReducerReturnValue<T>).dispatch || store.setState ];
+  return [ selectedState(store.getState()), handleChangeState ];
 };
 
 export default useGlobalStore;

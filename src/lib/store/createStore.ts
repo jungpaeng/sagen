@@ -1,4 +1,4 @@
-import {DispatchType, ReducerReturnType } from ".";
+import {ReducerReturnType } from ".";
 
 type SetValueFunction<T = any> = (currValue: T) => T;
 export type StoreGetState<T = any> = () => T;
@@ -7,14 +7,11 @@ export type StoreSetState<T = any> = (newValue: T | SetValueFunction<T>) => void
 interface CreateStoreStateReturnValue<T> {
   getState: StoreGetState<T>;
   setState: StoreSetState<T>;
+  customSetState?: (state: any) => void;
   onChange: (callback: (newState: T, prevState: T) => void) => void;
 }
 
-export  interface CreateStoreReducerReturnValue<T> extends CreateStoreStateReturnValue<T> {
-  dispatch: DispatchType;
-}
-
-export type CreateStoreReturnValue<T> = CreateStoreStateReturnValue<T> | CreateStoreReducerReturnValue<T>;
+export type CreateStoreReturnValue<T> = CreateStoreStateReturnValue<T>;
 
 const createStore = <T = any>(createState: T | ReducerReturnType<T>): CreateStoreReturnValue<T> => {
   let state: T;
@@ -38,10 +35,10 @@ const createStore = <T = any>(createState: T | ReducerReturnType<T>): CreateStor
   };
 
   if (typeof createState === "function") {
-    const {dispatch, state: reduceState} = (createState as ReducerReturnType<T>)(getState, setState);
-    state = reduceState;
+    const {state: createdState, ...rest} = (createState as ReducerReturnType<T>)(getState, setState);
+    state = createdState;
 
-    return {getState, setState, onChange, dispatch};
+    return {getState, setState, onChange, ...rest};
   } else {
     state = createState;
     return { getState, setState, onChange };

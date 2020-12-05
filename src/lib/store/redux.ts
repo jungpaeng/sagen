@@ -7,7 +7,7 @@ interface ReducerAction {
 
 interface ReducerStore<T> {
   state: T;
-  dispatch: DispatchType;
+  customSetState: DispatchType;
 }
 
 
@@ -19,14 +19,14 @@ const redux = <T = any>(reducer: ReducerFunction<T>, defaultState: T): ReducerRe
   getState,
   setState,
 ): ReducerStore<T> => {
-  const dispatch = (action: ReducerAction) => {
+  const customSetState = (action: ReducerAction) => {
     setState(state => {
       return reducer(state, action)
     });
   };
 
   setState(defaultState);
-  return { state: getState(), dispatch };
+  return { state: getState(), customSetState };
 };
 
 export default redux;
