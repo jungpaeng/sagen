@@ -1,15 +1,14 @@
 import { StoreGetState, StoreSetState } from '../store';
 
-interface ReducerAction {
+export interface ReducerAction {
   type: string;
   [key: string]: any;
 }
 
-interface ReducerStore<T> {
+export interface ReducerStore<T> {
   state: T;
   customSetState: DispatchType;
 }
-
 
 export type DispatchType = (action: ReducerAction) => void;
 export type ReducerFunction<T> = (state: T, action: ReducerAction) => T;
