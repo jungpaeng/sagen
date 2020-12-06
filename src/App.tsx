@@ -3,6 +3,7 @@ import useGlobalStore from "./lib/useGlobalStore";
 import globalStore from './store/globalStore';
 import {createStore} from './lib/store';
 import {redux} from './lib/middleware'
+import AppPersist from './AppPersist';
 
 export function testReducer(state: number, action: any) {
   switch (action.type) {
@@ -52,7 +53,6 @@ const StringChild = () => {
 
 function App() {
   const [state, dispatch] = useGlobalStore(reduxStore);
-  console.log(state);
 
   return (
     <div className="App">
@@ -65,6 +65,7 @@ function App() {
       </button>
       <NumberChild />
       <StringChild />
+      <AppPersist />
     </div>
   );
 }
