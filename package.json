@@ -8,9 +8,18 @@
   "scripts": {
     "eslint": "eslint --fix \"src/**/*.{js,ts,jsx,tsx}\"",
     "eslint-examples": "eslint --fix \"example/src/**/*.{js,ts,jsx,tsx}\"",
-    "eslint:ci": "eslint \"{src,example/src}/**/*.{js,ts,jsx,tsx}\""
+    "eslint:ci": "eslint \"{src,example/src}/**/*.{js,ts,jsx,tsx}\"",
+    "build": "rollup -c"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/plugin-external-helpers": "^7.12.1",
+    "@babel/plugin-transform-react-jsx": "^7.12.7",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/plugin-transform-typescript": "^7.12.1",
+    "@babel/preset-env": "^7.12.7",
+    "@rollup/plugin-babel": "^5.2.2",
+    "@rollup/plugin-node-resolve": "^11.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@typescript-eslint/eslint-plugin": "^4.9.0",
@@ -26,6 +35,10 @@
     "prettier": "^2.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "rollup": "^2.34.2",
+    "rollup-plugin-size-snapshot": "^0.12.0",
+    "rollup-plugin-typescript2": "^0.29.0",
+    "rollup-plugin-uglify": "^6.0.4",
     "typescript": "^4.1.2"
   },
   "dependencies": {}
