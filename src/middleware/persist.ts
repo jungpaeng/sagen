@@ -1,6 +1,12 @@
 import { PersistOptions } from '../types/persist';
-import { ReducerAction, ReducerReturnType, ReducerStore } from '../types/redux';
-import { StoreSetState } from '../types/store';
+import { DispatchType, ReducerAction } from '../types/redux';
+import {
+  CommonStore,
+  NextState,
+  ReducerReturnType,
+  StoreGetState,
+  StoreSetState,
+} from '../types/store';
 
 const tempStorage = {
   getItem: () => null,
@@ -10,7 +16,10 @@ const tempStorage = {
 const persist = <T = any>(
   options: PersistOptions<T>,
   createState: T | ReducerReturnType<T>,
-): ReducerReturnType<T> => (getState, setState): ReducerStore<T> => {
+) => (
+  getState: StoreGetState<T>,
+  setState: StoreSetState<T>,
+): CommonStore<T> => {
   const {
     name,
     storage = typeof localStorage !== 'undefined' ? localStorage : tempStorage,
@@ -35,20 +44,18 @@ const persist = <T = any>(
       state,
       customSetState: dispatch,
     } = (createState as ReducerReturnType<T>)(getState, setState);
-    const customSetState = (action: ReducerAction) => {
+    const customSetState: DispatchType = (action: ReducerAction) => {
       dispatch(action);
       setStorage();
     };
 
     return { state, customSetState };
   } else {
-    const customSetState = (nextState: StoreSetState<T>) => {
-      // @ts-ignore
+    const customSetState: StoreSetState<T> = (nextState: NextState<T>) => {
       setState(nextState);
       setStorage();
     };
 
-    // @ts-ignore
     return { state: createState, customSetState };
   }
 };

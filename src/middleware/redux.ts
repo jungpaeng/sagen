@@ -1,9 +1,5 @@
-import {
-  ReducerAction,
-  ReducerFunction,
-  ReducerReturnType,
-  ReducerStore,
-} from '../types/redux';
+import { ReducerAction, ReducerFunction } from '../types/redux';
+import { ReducerReturnType, ReducerStore } from '../types/store';
 
 const redux = <T = any>(
   reducer: ReducerFunction<T>,

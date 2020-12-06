@@ -1,5 +1,8 @@
-import { ReducerReturnType } from '../types/redux';
-import { CreateStoreReturnValue, SetValueFunction } from '../types/store';
+import {
+  CreateStoreReturnValue,
+  ReducerReturnType,
+  SetValueFunction,
+} from '../types/store';
 
 const createStore = <T = any>(
   createState: T | ReducerReturnType<T>,
