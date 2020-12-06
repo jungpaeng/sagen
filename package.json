@@ -1,6 +1,6 @@
 {
-  "name": "react-manage-global-state",
-  "version": "1.0.0",
+  "name": "sagen",
+  "version": "0.0.1",
   "main": "index.js",
   "repository": "https://github.com/jungpaeng/react-manage-global-state.git",
   "author": "jungpaeng <meis1541@naver.com>",
