@@ -29,3 +29,8 @@ export type ReducerReturnType<T> = (
 ) => ReducerStore<T>;
 
 export type CommonStore<T> = StateStore<T> | ReducerStore<T>;
+
+export type MiddlewareReturnType<T> = (
+  getState: StoreGetState<T>,
+  setState: StoreSetState<T>,
+) => CommonStore<T>;

@@ -1,11 +1,12 @@
 import {
   CreateStoreReturnValue,
+  MiddlewareReturnType,
   ReducerReturnType,
   SetValueFunction,
 } from '../types/store';
 
 const createStore = <T = any>(
-  createState: T | ReducerReturnType<T>,
+  createState: T | MiddlewareReturnType<T>,
 ): CreateStoreReturnValue<T> => {
   let state: T;
   const callbackList: Array<(newState: T, prevState: T) => void> = [];

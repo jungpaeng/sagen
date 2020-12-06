@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStore, useGlobalStore } from '../../src/store';
-import { persist, redux } from '../../src/middleware';
+import { persist } from '../../src/middleware';
 
 export function testReducer(state: { num: number; str: string }, action: any) {
   switch (action.type) {
@@ -18,7 +18,7 @@ const globalStore = createStore<{ num: number, str: string }>(
       name: 'local-persist-test',
       storage: localStorage,
     },
-    redux(testReducer, { num: 0, str: '' }),
+    { num: 0, str: '' },
   ),
 );
 
