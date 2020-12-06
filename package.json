@@ -4,8 +4,10 @@
   "description": "Management global state with out provider",
   "main": "index.js",
   "repository": "https://github.com/jungpaeng/react-manage-global-state.git",
-  "author": "jungpaeng <meis1541@naver.com>",
+  "author": "jungpaeng <meis1541@naver.com> (https://github.com/jungpaeng)",
   "license": "MIT",
+  "homepage": "https://github.com/jungpaeng/sagen",
+  "bugs": "https://github.com/jungpaeng/sagen/issues",
   "scripts": {
     "eslint": "eslint --fix \"src/**/*.{js,ts,jsx,tsx}\"",
     "eslint-examples": "eslint --fix \"example/src/**/*.{js,ts,jsx,tsx}\"",
@@ -50,5 +52,15 @@
   },
   "peerDependencies": {
     "react": ">=16.8"
-  }
+  },
+  "keywords": [
+    "react",
+    "state",
+    "manager",
+    "management",
+    "redux",
+    "store",
+    "state management",
+    "flux"
+  ]
 }
