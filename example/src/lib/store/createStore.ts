@@ -1,8 +1,10 @@
-import {ReducerReturnType } from "../middleware";
+import { ReducerReturnType } from '../middleware';
 
-type SetValueFunction<T = any> = (currValue: T) => T;
+export type SetValueFunction<T = any> = (currValue: T) => T;
 export type StoreGetState<T = any> = () => T;
-export type StoreSetState<T = any> = (newValue: T | SetValueFunction<T>) => void;
+export type StoreSetState<T = any> = (
+  newValue: T | SetValueFunction<T>,
+) => void;
 
 interface CreateStoreStateReturnValue<T> {
   getState: StoreGetState<T>;
@@ -13,14 +15,19 @@ interface CreateStoreStateReturnValue<T> {
 
 export type CreateStoreReturnValue<T> = CreateStoreStateReturnValue<T>;
 
-const createStore = <T = any>(createState: T | ReducerReturnType<T>): CreateStoreReturnValue<T> => {
+const createStore = <T = any>(
+  createState: T | ReducerReturnType<T>,
+): CreateStoreReturnValue<T> => {
   let state: T;
   const callbackList: Array<(newState: T, prevState: T) => void> = [];
 
   const getState = () => state;
   const setState = (nextState: T | SetValueFunction<T>) => {
     const prevState = state;
-    state = typeof nextState === "function" ? (nextState as Function)(state) : nextState;
+    state =
+      typeof nextState === 'function'
+        ? (nextState as Function)(state)
+        : nextState;
     callbackList.forEach((callback) => callback(state, prevState));
   };
 
@@ -34,11 +41,14 @@ const createStore = <T = any>(createState: T | ReducerReturnType<T>): CreateStor
     };
   };
 
-  if (typeof createState === "function") {
-    const {state: createdState, ...rest} = (createState as ReducerReturnType<T>)(getState, setState);
+  if (typeof createState === 'function') {
+    const {
+      state: createdState,
+      ...rest
+    } = (createState as ReducerReturnType<T>)(getState, setState);
     state = createdState;
 
-    return {getState, setState, onChange, ...rest};
+    return { getState, setState, onChange, ...rest };
   } else {
     state = createState;
     return { getState, setState, onChange };

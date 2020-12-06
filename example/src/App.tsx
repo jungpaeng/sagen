@@ -1,8 +1,8 @@
 import React from 'react';
-import useGlobalStore from "./lib/useGlobalStore";
+import useGlobalStore from './lib/useGlobalStore';
 import globalStore from './store/globalStore';
-import {createStore} from './lib/store';
-import {redux} from './lib/middleware'
+import { createStore } from './lib/store';
+import { redux } from './lib/middleware';
 import AppPersist from './AppPersist';
 
 export function testReducer(state: number, action: any) {
@@ -27,19 +27,17 @@ const NumberChild = () => {
   const handleClickBtn = React.useCallback(() => {
     setValue((curr: any) => ({
       ...curr,
-      num: curr.num + 1
+      num: curr.num + 1,
     }));
   }, [setValue]);
 
   return (
     <div className="App">
       <p>number: {num}</p>
-      <button onClick={handleClickBtn}>
-        Click
-      </button>
+      <button onClick={handleClickBtn}>Click</button>
     </div>
-  )
-}
+  );
+};
 
 const StringChild = () => {
   const [str] = useGlobalStore(globalStore, stringSelector);
@@ -48,8 +46,8 @@ const StringChild = () => {
     <div className="App">
       <p>string: {str}</p>
     </div>
-  )
-}
+  );
+};
 
 function App() {
   const [state, dispatch] = useGlobalStore(reduxStore);
@@ -57,10 +55,10 @@ function App() {
   return (
     <div className="App">
       <p>state: {state}</p>
-      <button onClick={() => {
-        // @ts-ignore
-        dispatch({type: 'INCREMENT'});
-      }}>
+      <button
+        onClick={() => {
+          dispatch({ type: 'INCREMENT' });
+        }}>
         ClickMe
       </button>
       <NumberChild />

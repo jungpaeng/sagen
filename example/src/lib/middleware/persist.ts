@@ -1,10 +1,10 @@
-import {StoreSetState} from '../store';
-import {ReducerReturnType, ReducerAction, ReducerStore} from '.';
+import { SetValueFunction } from '../store';
+import { ReducerReturnType, ReducerAction, ReducerStore } from '.';
 
 type StateStorage = {
   getItem: (name: string) => string | null | Promise<string | null>;
   setItem: (name: string, value: string) => void | Promise<void>;
-}
+};
 
 interface PersistOptions<T> {
   name: string;
@@ -16,12 +16,12 @@ interface PersistOptions<T> {
 const tempStorage = {
   getItem: () => null,
   setItem: () => {},
-}
+};
 
-const persist = <T = any>(options: PersistOptions<T>, createState: T | ReducerReturnType<T>): ReducerReturnType<T> => (
-  getState,
-  setState,
-): ReducerStore<T> =>  {
+const persist = <T = any>(
+  options: PersistOptions<T>,
+  createState: T | ReducerReturnType<T>,
+): ReducerReturnType<T> => (getState, setState): ReducerStore<T> => {
   const {
     name,
     storage = typeof localStorage !== 'undefined' ? localStorage : tempStorage,
@@ -29,19 +29,23 @@ const persist = <T = any>(options: PersistOptions<T>, createState: T | ReducerRe
     deserialize = JSON.parse,
   } = options;
 
-  const setStorage = async () => storage.setItem(name, await serialize(getState()));
+  const setStorage = async () =>
+    storage.setItem(name, await serialize(getState()));
 
   (async () => {
     try {
       const storedState = await storage.getItem(name);
       if (storedState) setState(await deserialize(storedState));
     } catch (e) {
-      console.error(new Error(`Unable to get to stored in "${name}"`))
+      console.error(new Error(`Unable to get to stored in "${name}"`));
     }
   })();
 
-  if (typeof createState === "function") {
-    const {state, customSetState: dispatch} = (createState as ReducerReturnType<T>)(getState, setState);
+  if (typeof createState === 'function') {
+    const {
+      state,
+      customSetState: dispatch,
+    } = (createState as ReducerReturnType<T>)(getState, setState);
     const customSetState = (action: ReducerAction) => {
       dispatch(action);
       setStorage();
@@ -49,13 +53,11 @@ const persist = <T = any>(options: PersistOptions<T>, createState: T | ReducerRe
 
     return { state, customSetState };
   } else {
-    const customSetState = (nextState: StoreSetState<T>) => {
-      // @ts-ignore
+    const customSetState = (nextState: T | SetValueFunction<T>) => {
       setState(nextState);
       setStorage();
     };
 
-    // @ts-ignore
     return { state: createState, customSetState };
   }
 };
