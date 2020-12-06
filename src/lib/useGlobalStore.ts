@@ -18,7 +18,7 @@ const useGlobalStore = <T = any>(
     return store.customSetState || store.setState
   }, [store]);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     // change callback
     const stateChange = store.onChange((newState: T, prevState: T) => {
       if ( !equalityFn( selectedState(newState), selectedState(prevState) ) ) {
