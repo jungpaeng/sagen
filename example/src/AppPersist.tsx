@@ -1,6 +1,5 @@
 import React from 'react';
-import { createStore, useGlobalStore } from '../../src/store';
-import { persist } from '../../src/middleware';
+import { createStore, persist, useGlobalStore } from './lib';
 
 export function testReducer(state: { num: number; str: string }, action: any) {
   switch (action.type) {

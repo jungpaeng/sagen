@@ -1,8 +1,7 @@
 import React from 'react';
 import AppPersist from './AppPersist';
+import { createStore, redux, useGlobalStore } from './lib';
 import globalStore from './store/globalStore';
-import { createStore, useGlobalStore } from '../../src/store';
-import { redux } from '../../src/middleware';
 
 export function testReducer(state: number, action: any) {
   switch (action.type) {
