@@ -28,7 +28,7 @@ import { createStore } from 'sagen';
 const globalStore = createStore({ num: 0, str: '' });
 ```
 
-#### state 값 관리
+#### management state
 
 You can manage values using the `useGlobalStore` hook!
 
@@ -135,7 +135,7 @@ const App = () => {
 };
 ```
 
-#### React 없이 사용하기
+#### Use sagen without React
 
 The `createStore` of `sagen` is not dependent on React. Usage is also the same as in React.
 
@@ -202,8 +202,6 @@ const globalStore = createStore(
   ),
 );
 ```
-
-Writing...
 
 ## 📜 License
 sagen is released under the [MIT license](https://github.com/jungpaeng/react-manage-global-state/blob/main/LICENSE).
