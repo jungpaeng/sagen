@@ -1,7 +1,6 @@
 import React from 'react';
-import { CreateStoreReturnValue } from './index';
+import { CreateStoreReturnValue, EqualityFunction } from '../types/store';
 
-type EqualityFunction<T> = (prev: T, next: T) => boolean;
 const defaultEqualityFn = (prev: any, next: any) => prev === next;
 
 const useGlobalStore = <T = any>(

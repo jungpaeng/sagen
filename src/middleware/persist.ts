@@ -1,17 +1,6 @@
-import { StoreSetState } from '../store';
-import { ReducerReturnType, ReducerAction, ReducerStore } from '.';
-
-type StateStorage = {
-  getItem: (name: string) => string | null | Promise<string | null>;
-  setItem: (name: string, value: string) => void | Promise<void>;
-};
-
-interface PersistOptions<T> {
-  name: string;
-  storage?: StateStorage;
-  serialize?: (state: T) => string | Promise<string>;
-  deserialize?: (state: string) => T | Promise<T>;
-}
+import { PersistOptions } from '../types/persist';
+import { ReducerAction, ReducerReturnType, ReducerStore } from '../types/redux';
+import { StoreSetState } from '../types/store';
 
 const tempStorage = {
   getItem: () => null,

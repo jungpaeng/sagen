@@ -1,19 +1,5 @@
-import { ReducerReturnType } from '../middleware';
-
-type SetValueFunction<T = any> = (currValue: T) => T;
-export type StoreGetState<T = any> = () => T;
-export type StoreSetState<T = any> = (
-  newValue: T | SetValueFunction<T>,
-) => void;
-
-interface CreateStoreStateReturnValue<T> {
-  getState: StoreGetState<T>;
-  setState: StoreSetState<T>;
-  customSetState?: (state: any) => void;
-  onChange: (callback: (newState: T, prevState: T) => void) => void;
-}
-
-export type CreateStoreReturnValue<T> = CreateStoreStateReturnValue<T>;
+import { ReducerReturnType } from '../types/redux';
+import { CreateStoreReturnValue, SetValueFunction } from '../types/store';
 
 const createStore = <T = any>(
   createState: T | ReducerReturnType<T>,
