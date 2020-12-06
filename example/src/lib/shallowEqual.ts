@@ -2,6 +2,7 @@ function is(prev: any, next: any) {
   if (prev === next) {
     return prev !== 0 || next !== 0 || 1 / prev === 1 / next;
   } else {
+    // eslint-disable-next-line no-self-compare
     return prev !== prev && next !== next;
   }
 }
