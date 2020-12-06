@@ -5,7 +5,24 @@
   "repository": "https://github.com/jungpaeng/react-manage-global-state.git",
   "author": "jungpaeng <meis1541@naver.com>",
   "license": "MIT",
+  "scripts": {
+    "eslint": "eslint --fix \"src/**/*.{js,ts,jsx,tsx}\"",
+    "eslint-examples": "eslint --fix \"example/src/**/*.{js,ts,jsx,tsx}\"",
+    "eslint:ci": "eslint \"{src,example/src}/**/*.{js,ts,jsx,tsx}\""
+  },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
+    "eslint": "^7.15.0",
+    "eslint-config-prettier": "^7.0.0",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.3",
+    "eslint-plugin-prettier": "^3.2.0",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.2.1",
     "typescript": "^4.1.2"
-  }
+  },
+  "dependencies": {}
 }
