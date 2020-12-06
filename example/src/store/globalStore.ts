@@ -1,4 +1,4 @@
-import { createStore } from "../lib/store";
+import { createStore } from "../../../src/store";
 
 const globalStore = createStore({
   num: 0,
