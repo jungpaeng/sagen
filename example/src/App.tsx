@@ -1,6 +1,6 @@
 import React from 'react';
 import AppPersist from './AppPersist';
-import { createStore, redux, useGlobalStore } from './lib';
+import { createStore, redux, useGlobalStore } from 'sagen';
 import globalStore from './store/globalStore';
 
 export function testReducer(state: number, action: any) {

@@ -1,4 +1,4 @@
-import { createStore } from "../lib";
+import { createStore } from "sagen";
 
 const globalStore = createStore({
   num: 0,

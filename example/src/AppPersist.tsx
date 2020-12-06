@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStore, persist, useGlobalStore } from './lib';
+import { createStore, persist, redux, useGlobalStore } from 'sagen';
 
 export function testReducer(state: { num: number; str: string }, action: any) {
   switch (action.type) {
@@ -17,7 +17,7 @@ const globalStore = createStore<{ num: number, str: string }>(
       name: 'local-persist-test',
       storage: localStorage,
     },
-    { num: 0, str: '' },
+    redux(testReducer, { num: 0, str: '' }),
   ),
 );
 
