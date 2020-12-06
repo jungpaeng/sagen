@@ -1,6 +1,7 @@
 {
   "name": "sagen",
   "version": "0.0.1",
+  "description": "Management global state with out provider",
   "main": "index.js",
   "repository": "https://github.com/jungpaeng/react-manage-global-state.git",
   "author": "jungpaeng <meis1541@naver.com>",
