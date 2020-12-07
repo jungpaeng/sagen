@@ -2,7 +2,8 @@
   "name": "sagen",
   "version": "0.0.3",
   "description": "Management global state with out provider",
-  "main": "index.js",
+  "main": "index.cjs.js",
+  "module": "index.js",
   "repository": "https://github.com/jungpaeng/react-manage-global-state.git",
   "author": "jungpaeng <meis1541@naver.com> (https://github.com/jungpaeng)",
   "license": "MIT",
@@ -54,8 +55,8 @@
     "react-test-renderer": "^17.0.1",
     "rollup": "^2.34.2",
     "rollup-plugin-size-snapshot": "^0.12.0",
+    "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.29.0",
-    "rollup-plugin-uglify": "^6.0.4",
     "typescript": "^4.1.2"
   },
   "peerDependencies": {
