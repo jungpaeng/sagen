@@ -2,7 +2,7 @@ import path from 'path';
 import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript2';
-import { uglify } from 'rollup-plugin-uglify';
+import { terser } from 'rollup-plugin-terser';
 import { sizeSnapshot } from 'rollup-plugin-size-snapshot';
 
 const createBabelConfig = require('./babel.config');
@@ -26,20 +26,62 @@ const getBabelOptions = (targets) => {
   };
 };
 
+function createESMConfig(input, output) {
+  return {
+    input,
+    output: { file: output, format: 'esm' },
+    external,
+    plugins: [
+      resolve({ extensions }),
+      typescript(),
+      babel(getBabelOptions({ node: 8 })),
+      sizeSnapshot(),
+      terser(),
+    ],
+  };
+}
+
 function createCommonJSConfig(input, output) {
   return {
     input,
-    output: [{ dir: output, format: 'cjs', exports: 'named', sourcemap: true }],
-    preserveModules: true,
+    output: { file: output, format: 'cjs', exports: 'named' },
     external,
     plugins: [
       resolve({ extensions }),
       typescript(),
       babel(getBabelOptions({ ie: 11 })),
       sizeSnapshot(),
-      uglify(),
+      terser(),
     ],
   };
 }
 
-export default [createCommonJSConfig('src/index.ts', 'dist')];
+function createIIFEConfig(input, output, globalName) {
+  return {
+    input,
+    output: {
+      file: output,
+      format: 'iife',
+      exports: 'named',
+      name: globalName,
+      globals: {
+        react: 'React',
+        '@babel/runtime/regenerator': 'regeneratorRuntime',
+      },
+    },
+    external,
+    plugins: [
+      resolve({ extensions }),
+      typescript(),
+      babel(getBabelOptions({ ie: 11 })),
+      sizeSnapshot(),
+      terser(),
+    ],
+  };
+}
+
+export default [
+  createESMConfig('src/index.ts', 'dist/index.js'),
+  createCommonJSConfig('src/index.ts', 'dist/index.cjs.js'),
+  createIIFEConfig('src/index.ts', 'dist/index.iife.js', 'sagen'),
+];
