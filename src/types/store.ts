@@ -9,7 +9,7 @@ export interface CreateStoreReturnValue<T> {
   getState: StoreGetState<T>;
   setState: StoreSetState<T>;
   customSetState?: (state: any) => void;
-  onChange: (callback: (newState: T, prevState: T) => void) => void;
+  onChange: (callback: (newState: T, prevState: T) => void) => () => void;
 }
 
 export type EqualityFunction<T> = (prev: T, next: T) => boolean;

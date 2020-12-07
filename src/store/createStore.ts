@@ -26,7 +26,7 @@ const createStore = <T = any>(
     callbackList.push(callback);
 
     return () => {
-      const idx = callbackList.findIndex(callback);
+      const idx = callbackList.indexOf(callback);
       callbackList.splice(idx, 1);
     };
   };
