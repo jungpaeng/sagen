@@ -35,6 +35,13 @@ describe('useGlobalStore', () => {
     expect(result.current[0]).toBe(200);
   });
 
+  it('should not change if set state pass prev state', () => {
+    const { result } = renderHook(() => useGlobalStore(store));
+
+    act(() => result.current[1]((prev: number) => prev));
+    expect(result.current[0]).toBe(200);
+  });
+
   it('should use redux middleware', () => {
     const { result } = renderHook(() => useGlobalStore(reduxStore));
 
