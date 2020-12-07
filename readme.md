@@ -2,8 +2,14 @@
   <img width="300" alt="sagen Logo" src="https://user-images.githubusercontent.com/26024412/101279836-780ddb80-3808-11eb-9ff5-69693c56373e.png" style="max-width: 100%;"><br/>
 </h1>
 
+[![Build Status](https://travis-ci.com/jungpaeng/sagen.svg?branch=main)](https://travis-ci.com/jungpaeng/sagen)
 [![Maintainability](https://api.codeclimate.com/v1/badges/0c2a4ad6c9ad60f3b2cf/maintainability)](https://codeclimate.com/github/jungpaeng/sagen/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/0c2a4ad6c9ad60f3b2cf/test_coverage)](https://codeclimate.com/github/jungpaeng/sagen/test_coverage)
+
+![min](https://badgen.net/bundlephobia/min/sagen)
+![minzip](https://badgen.net/bundlephobia/minzip/sagen)
+![dependency-count](https://badgen.net/bundlephobia/dependency-count/sagen)
+![tree-shaking](https://badgen.net/bundlephobia/tree-shaking/sagen)
 
 [Korean](https://github.com/jungpaeng/sagen/blob/main/readme-kr.md) | [English](https://github.com/jungpaeng/sagen/blob/main/readme.md)  
 
