@@ -2,6 +2,10 @@
   <img width="300" alt="sagen Logo" src="https://user-images.githubusercontent.com/26024412/101279836-780ddb80-3808-11eb-9ff5-69693c56373e.png" style="max-width: 100%;"><br/>
 </h1>
 
+<a href="https://codeclimate.com/github/jungpaeng/sagen/maintainability"><img src="https://api.codeclimate.com/v1/badges/0c2a4ad6c9ad60f3b2cf/maintainability" /></a>
+
+[Korean](https://github.com/jungpaeng/sagen/blob/main/readme-kr.md) | [English](https://github.com/jungpaeng/sagen/blob/main/readme.md)  
+
 ## ⚙ Installation
 #### npm
 ```bash
