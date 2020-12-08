@@ -24,13 +24,13 @@ export interface ReducerStore<T> {
   customSetState: DispatchType;
 }
 export type ReducerReturnType<T> = (
-  getState: StoreGetState<T>,
   setState: StoreSetState<T>,
+  getState: StoreGetState<T>,
 ) => ReducerStore<T>;
 
 export type CommonStore<T> = StateStore<T> | ReducerStore<T>;
 
 export type MiddlewareReturnType<T> = (
-  getState: StoreGetState<T>,
   setState: StoreSetState<T>,
+  getState: StoreGetState<T>,
 ) => CommonStore<T>;

@@ -15,10 +15,10 @@ export const createReduxPersistStore = (defaultValue: any) => {
     redux(testReducer, defaultValue),
   );
   const persistStore = persistFunction(
-    () => store,
     (state) => {
       store = typeof state === 'function' ? (state as Function)(store) : state;
     },
+    () => store,
   );
 
   return {
@@ -31,10 +31,10 @@ export const createPersistStore = (defaultValue: any) => {
   let store: any;
   const persistFunction = persist({ name: 'test-storage' }, defaultValue);
   const persistStore = persistFunction(
-    () => store,
     (state) => {
       store = typeof state === 'function' ? (state as Function)(store) : state;
     },
+    () => store,
   );
 
   return {
