@@ -1,12 +1,24 @@
-import { PersistOptions } from '../types/persist';
-import { DispatchType, ReducerAction } from '../types/redux';
 import {
   CommonStore,
+  DispatchType,
   NextState,
+  ReducerAction,
   ReducerReturnType,
   StoreGetState,
   StoreSetState,
-} from '../types/store';
+} from '../store/createStore';
+
+export interface StateStorage {
+  getItem: (name: string) => string | null | Promise<string | null>;
+  setItem: (name: string, value: string) => void | Promise<void>;
+}
+
+export interface PersistOptions<T> {
+  name: string;
+  storage?: StateStorage;
+  serialize?: (state: T) => string | Promise<string>;
+  deserialize?: (state: string) => T | Promise<T>;
+}
 
 const tempStorage = {
   getItem: () => null,

@@ -33,7 +33,7 @@ function createESMConfig(input, output) {
     external,
     plugins: [
       resolve({ extensions }),
-      typescript(),
+      typescript({ useTsconfigDeclarationDir: true }),
       babel(getBabelOptions({ node: 8 })),
       sizeSnapshot(),
       terser(),
@@ -48,31 +48,7 @@ function createCommonJSConfig(input, output) {
     external,
     plugins: [
       resolve({ extensions }),
-      typescript(),
-      babel(getBabelOptions({ ie: 11 })),
-      sizeSnapshot(),
-      terser(),
-    ],
-  };
-}
-
-function createIIFEConfig(input, output, globalName) {
-  return {
-    input,
-    output: {
-      file: output,
-      format: 'iife',
-      exports: 'named',
-      name: globalName,
-      globals: {
-        react: 'React',
-        '@babel/runtime/regenerator': 'regeneratorRuntime',
-      },
-    },
-    external,
-    plugins: [
-      resolve({ extensions }),
-      typescript(),
+      typescript({ useTsconfigDeclarationDir: true }),
       babel(getBabelOptions({ ie: 11 })),
       sizeSnapshot(),
       terser(),
@@ -83,5 +59,4 @@ function createIIFEConfig(input, output, globalName) {
 export default [
   createESMConfig('src/index.ts', 'dist/index.js'),
   createCommonJSConfig('src/index.ts', 'dist/index.cjs.js'),
-  createIIFEConfig('src/index.ts', 'dist/index.iife.js', 'sagen'),
 ];

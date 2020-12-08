@@ -5,17 +5,11 @@
     "jsx": "preserve",
     "allowSyntheticDefaultImports": true,
     "declaration": true,
-    "declarationDir": "./dist",
+    "declarationDir": "dist/types",
     "esModuleInterop": true,
     "moduleResolution": "node",
     "skipLibCheck": true
   },
-  "include": [
-    "src/**/*",
-    "tests/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
