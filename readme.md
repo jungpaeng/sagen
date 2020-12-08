@@ -6,10 +6,10 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/0c2a4ad6c9ad60f3b2cf/maintainability)](https://codeclimate.com/github/jungpaeng/sagen/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/0c2a4ad6c9ad60f3b2cf/test_coverage)](https://codeclimate.com/github/jungpaeng/sagen/test_coverage)
 
-![min](https://badgen.net/bundlephobia/min/sagen)
-![minzip](https://badgen.net/bundlephobia/minzip/sagen)
-![dependency-count](https://badgen.net/bundlephobia/dependency-count/sagen)
-![tree-shaking](https://badgen.net/bundlephobia/tree-shaking/sagen)
+![min](https://badgen.net/bundlephobia/min/sagen@latest)
+![minzip](https://badgen.net/bundlephobia/minzip/sagen@latest)
+![dependency-count](https://badgen.net/bundlephobia/dependency-count/sagen@latest)
+![tree-shaking](https://badgen.net/bundlephobia/tree-shaking/sagen@latest)
 
 [Korean](https://github.com/jungpaeng/sagen/blob/main/readme-kr.md) | [English](https://github.com/jungpaeng/sagen/blob/main/readme.md)  
 
