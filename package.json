@@ -1,6 +1,6 @@
 {
   "name": "sagen",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Management global state with out provider",
   "main": "index.cjs.js",
   "module": "index.js",
