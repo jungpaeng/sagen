@@ -30,11 +30,11 @@ describe('redux', () => {
 
     beforeAll(() => {
       const reduxValue = reduxFunction(
-        () => store,
         (state) => {
           store =
             typeof state === 'function' ? (state as Function)(store) : state;
         },
+        () => store,
       );
 
       state = reduxValue.state;

@@ -17,8 +17,8 @@ const persist = <T = any>(
   options: PersistOptions<T>,
   createState: T | ReducerReturnType<T>,
 ) => (
-  getState: StoreGetState<T>,
   setState: StoreSetState<T>,
+  getState: StoreGetState<T>,
 ): CommonStore<T> => {
   const {
     name,
@@ -43,7 +43,7 @@ const persist = <T = any>(
     const {
       state,
       customSetState: dispatch,
-    } = (createState as ReducerReturnType<T>)(getState, setState);
+    } = (createState as ReducerReturnType<T>)(setState, getState);
     const customSetState: DispatchType = (action: ReducerAction) => {
       dispatch(action);
       setStorage();

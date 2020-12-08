@@ -4,7 +4,7 @@ import { ReducerReturnType, ReducerStore } from '../types/store';
 const redux = <T = any>(
   reducer: ReducerFunction<T>,
   defaultState: T,
-): ReducerReturnType<T> => (getState, setState): ReducerStore<T> => {
+): ReducerReturnType<T> => (setState, getState): ReducerStore<T> => {
   const customSetState = (action: ReducerAction) => {
     setState((state: T) => {
       return reducer(state, action);

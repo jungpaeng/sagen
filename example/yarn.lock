@@ -9514,10 +9514,10 @@ safe-regex@^1.1.0:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
-sagen@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/sagen/-/sagen-0.0.1.tgz#f0786420610c1f55738ea4de75f0767901537d28"
-  integrity sha512-2L2Bhmj23Yphy4Effg1dtjcMsIxqip7jEYXReU16gAW0O+2uI1VxNjTtHgAqOgMFikDgAP0sHwdkqU0Prh3AkA==
+sagen@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/sagen/-/sagen-0.0.3.tgz#ad42ee0fd62acae49a1c0ff3ea5b368b5cbfdcb2"
+  integrity sha512-kL823XImtmcHqkt5my34f53hkcpvbZSVOONUV0/J/cky55Qfy0/KBlOTYxnl0Msvs7zbCjaH9JZIK3k0Sv13Ug==
 
 sane@^4.0.3:
   version "4.1.0"

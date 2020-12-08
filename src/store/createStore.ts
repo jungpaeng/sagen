@@ -35,7 +35,7 @@ const createStore = <T = any>(
     const {
       state: createdState,
       ...rest
-    } = (createState as ReducerReturnType<T>)(getState, setState);
+    } = (createState as ReducerReturnType<T>)(setState, getState);
     state = createdState;
 
     return { getState, setState, onChange, ...rest };
