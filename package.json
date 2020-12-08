@@ -5,6 +5,7 @@
   "main": "index.cjs.js",
   "module": "index.js",
   "types": "types",
+  "sideEffects": false,
   "repository": "https://github.com/jungpaeng/react-manage-global-state.git",
   "author": "jungpaeng <meis1541@naver.com> (https://github.com/jungpaeng)",
   "license": "MIT",
