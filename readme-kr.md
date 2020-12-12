@@ -119,6 +119,57 @@ const App = () => {
 };
 ```
 
+#### customSetState
+
+인자를 `createStore` 함수에 넘길 때 함수의 형태로 넘길 수 있습니다.
+
+내부적으로 첫 번째 인자는 `set` 함수, 두 번째 인자는 `get` 함수를 전달받습니다. 이를 이용해 `customSetState` 함수를 작성할 수 있습니다.
+
+```typescript jsx
+const testStore = createStore((set) => {
+  return {
+    state: {
+      num: 1,
+      str: 'test',
+    },
+    customSetState: {
+      setNum: (num: number) => set((prev: any) => ({ ...prev, num })),
+    },
+  };
+});
+
+const App = () => {
+  const [state, setState] = useGlobalStore(testStore);
+  const { num, str } = state;
+  const { setNum } = setState;
+
+  return (
+    <div className="App">
+      <p>number state: {num}</p>
+      <button onClick={() => setNum(100)}>
+        ClickMe
+      </button>
+    </div>
+  );
+};
+```
+
+위와 같이 작성하면 `useGlobalStore`의 두 번째 인자에 `customStore`가 반환됩니다.
+
+전달받은 `setNum`에서 prev 값을 이용한 계산을 하고 싶다고 한다면 아래와 같이 작성되어야 합니다.
+
+```typescript jsx
+customSetState: {
+  setNum: (numFunc) => {
+    if (typeof numFunc === 'function') {
+      return set((prev: any) => ({ ...prev, num: numFunc(prev.num) }));
+    } else {
+      return set((prev: any) => ({ ...prev, numFunc }));
+    }
+  }
+}
+```
+
 #### shallowEqual
 
 객체 또는 배열 등 `===`로 비교힐 수 없는 값의 경우, `shallowEqual` 함수를 넘겨서 값을 비교할 수 있습니다.

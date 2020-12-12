@@ -123,6 +123,57 @@ const App = () => {
 };
 ```
 
+#### customSetState
+
+When passing an argument to the `createStore` function, it can be passed in the form of a function.
+
+Internally, the first argument is a `set` function and the second argument is a `get` function. You can use this to write a `customSetState` function.
+
+```typescript jsx
+const testStore = createStore((set) => {
+  return {
+    state: {
+      num: 1,
+      str: 'test',
+    },
+    customSetState: {
+      setNum: (num: number) => set((prev: any) => ({ ...prev, num })),
+    },
+  };
+});
+
+const App = () => {
+  const [state, setState] = useGlobalStore(testStore);
+  const { num, str } = state;
+  const { setNum } = setState;
+
+  return (
+    <div className="App">
+      <p>number state: {num}</p>
+      <button onClick={() => setNum(100)}>
+        ClickMe
+      </button>
+    </div>
+  );
+};
+```
+
+If written as above, `customStore` is returned as the second parameter of `useGlobalStore`.
+
+If you want to calculate using the prev value in the received `setNum`, it should be written as follows.
+
+```typescript jsx
+customSetState: {
+  setNum: (numFunc) => {
+    if (typeof numFunc === 'function') {
+      return set((prev: any) => ({ ...prev, num: numFunc(prev.num) }));
+    } else {
+      return set((prev: any) => ({ ...prev, numFunc }));
+    }
+  }
+}
+```
+
 #### shallowEqual
 
 For values that cannot be compared with `===`, such as objects or arrays,
