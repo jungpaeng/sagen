@@ -7,33 +7,36 @@ function is(prev: any, next: any) {
   }
 }
 
-function shallowEqual(prev: any, next: any) {
-  if (is(prev, next)) return true;
+function isPrimitiveType(data: any) {
+  return typeof data !== 'object' || data === null;
+}
 
-  if (
-    typeof prev !== 'object' ||
-    prev === null ||
-    typeof next !== 'object' ||
-    next === null
-  ) {
-    return false;
-  }
-
+function isDeepEqual(prev: any, next: any) {
   const keysA = Object.keys(prev);
   const keysB = Object.keys(next);
 
   if (keysA.length !== keysB.length) return false;
 
-  for (let i = 0; i < keysA.length; i++) {
-    if (
-      !Object.prototype.hasOwnProperty.call(next, keysA[i]) ||
-      !is(prev[keysA[i]], next[keysA[i]])
-    ) {
+  for (const item of keysA) {
+    if (!Object.prototype.hasOwnProperty.call(next, item)) {
+      return false;
+    } else if (!is(prev[item], next[item])) {
       return false;
     }
   }
 
   return true;
+}
+
+function shallowEqual(prev: any, next: any) {
+  if (is(prev, next)) {
+    return true;
+  } else if (isPrimitiveType(prev) || isPrimitiveType(next)) {
+    // is 함수에서 체크하지 못한 primitive type은 false를 반환
+    return false;
+  }
+
+  return isDeepEqual(prev, next);
 }
 
 export default shallowEqual;
