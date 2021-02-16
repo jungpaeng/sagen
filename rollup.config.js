@@ -8,9 +8,13 @@ import { sizeSnapshot } from 'rollup-plugin-size-snapshot';
 const createBabelConfig = require('./babel.config');
 
 const { root } = path.parse(process.cwd());
-const external = (id) => !id.startsWith('.') && !id.startsWith(root);
 const extensions = ['.js', '.ts', '.tsx'];
-const getBabelOptions = (targets) => {
+
+function external(id) {
+  return !id.startsWith('.') && !id.startsWith(root);
+}
+
+function getBabelOptions(targets) {
   const config = createBabelConfig({ env: (env) => env === 'build' }, targets);
   if (targets.ie) {
     config.plugins = [
@@ -24,20 +28,24 @@ const getBabelOptions = (targets) => {
     ...config,
     extensions,
   };
-};
+}
+
+function createPluginConfig(targets) {
+  return [
+    resolve({ extensions }),
+    typescript({ useTsconfigDeclarationDir: true }),
+    babel(getBabelOptions(targets)),
+    sizeSnapshot(),
+    terser(),
+  ];
+}
 
 function createESMConfig(input, output) {
   return {
     input,
     output: { file: output, format: 'esm' },
+    plugins: createPluginConfig({ node: 8 }),
     external,
-    plugins: [
-      resolve({ extensions }),
-      typescript({ useTsconfigDeclarationDir: true }),
-      babel(getBabelOptions({ node: 8 })),
-      sizeSnapshot(),
-      terser(),
-    ],
   };
 }
 
@@ -45,14 +53,8 @@ function createCommonJSConfig(input, output) {
   return {
     input,
     output: { file: output, format: 'cjs', exports: 'named' },
+    plugins: createPluginConfig({ ie: 11 }),
     external,
-    plugins: [
-      resolve({ extensions }),
-      typescript({ useTsconfigDeclarationDir: true }),
-      babel(getBabelOptions({ ie: 11 })),
-      sizeSnapshot(),
-      terser(),
-    ],
   };
 }
 
