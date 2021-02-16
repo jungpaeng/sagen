@@ -1,5 +1,5 @@
 import redux from '../../src/middleware/redux';
-import { ReducerReturnType, DispatchType } from '../../src';
+import { DispatchType, ReducerReturnType } from '../../src/store/createStore';
 
 const testReducer = (state: any, action: any) => {
   switch (action.type) {
