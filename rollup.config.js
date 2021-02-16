@@ -30,18 +30,22 @@ function getBabelOptions(targets) {
   };
 }
 
+function createPluginConfig(targets) {
+  return [
+    resolve({ extensions }),
+    typescript({ useTsconfigDeclarationDir: true }),
+    babel(getBabelOptions(targets)),
+    sizeSnapshot(),
+    terser(),
+  ];
+}
+
 function createESMConfig(input, output) {
   return {
     input,
     output: { file: output, format: 'esm' },
+    plugins: createPluginConfig({ node: 8 }),
     external,
-    plugins: [
-      resolve({ extensions }),
-      typescript({ useTsconfigDeclarationDir: true }),
-      babel(getBabelOptions({ node: 8 })),
-      sizeSnapshot(),
-      terser(),
-    ],
   };
 }
 
@@ -49,14 +53,8 @@ function createCommonJSConfig(input, output) {
   return {
     input,
     output: { file: output, format: 'cjs', exports: 'named' },
+    plugins: createPluginConfig({ ie: 11 }),
     external,
-    plugins: [
-      resolve({ extensions }),
-      typescript({ useTsconfigDeclarationDir: true }),
-      babel(getBabelOptions({ ie: 11 })),
-      sizeSnapshot(),
-      terser(),
-    ],
   };
 }
 
