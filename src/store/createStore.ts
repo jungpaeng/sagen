@@ -1,3 +1,5 @@
+import { isFunction } from '../lib';
+
 export type SetValueFunction<T = any> = (currValue: T) => T;
 export type NextState<T> = T | SetValueFunction<T>;
 
@@ -49,10 +51,7 @@ const createStore = <State = any>(
   const getState = () => state;
   const setState = (nextState: State | SetValueFunction<State>) => {
     const prevState = state;
-    state =
-      typeof nextState === 'function'
-        ? (nextState as Function)(state)
-        : nextState;
+    state = isFunction(nextState) ? (nextState as Function)(state) : nextState;
     callbackList.forEach((callback) => callback(state, prevState));
   };
 
@@ -66,7 +65,7 @@ const createStore = <State = any>(
     };
   };
 
-  if (typeof createState === 'function') {
+  if (isFunction(createState)) {
     const {
       state: createdState,
       ...rest
@@ -75,7 +74,7 @@ const createStore = <State = any>(
 
     return { getState, setState, onChange, ...rest };
   } else {
-    state = createState;
+    state = createState as State;
     return { getState, setState, onChange };
   }
 };
