@@ -28,18 +28,13 @@ export type StoreReturnType<State, ReturnType = CustomStore<State, any>> = (
   getState: StoreGetState<State>,
 ) => ReturnType;
 
-export type ReducerReturnType<State> = StoreReturnType<
-  State,
-  ReducerStore<State>
->;
+export type ReducerReturnType<State> = StoreReturnType<State, ReducerStore<State>>;
 
 export interface CreateStoreReturnValue<State> {
   getState: StoreGetState<State>;
   setState: StoreSetState<State>;
   customSetState?: (state: any) => void;
-  onChange: (
-    callback: (newState: State, prevState: State) => void,
-  ) => () => void;
+  onChange: (callback: (newState: State, prevState: State) => void) => () => void;
 }
 
 const createStore = <State = any>(
@@ -66,10 +61,10 @@ const createStore = <State = any>(
   };
 
   if (isFunction(createState)) {
-    const {
-      state: createdState,
-      ...rest
-    } = (createState as ReducerReturnType<State>)(setState, getState);
+    const { state: createdState, ...rest } = (createState as ReducerReturnType<State>)(
+      setState,
+      getState,
+    );
     state = createdState;
 
     return { getState, setState, onChange, ...rest };

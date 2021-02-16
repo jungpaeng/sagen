@@ -50,9 +50,7 @@ describe('useGlobalStore', () => {
   });
 
   it('should pass selector function', () => {
-    const { result } = renderHook(() =>
-      useGlobalStore(objStore, numberSelector),
-    );
+    const { result } = renderHook(() => useGlobalStore(objStore, numberSelector));
 
     expect(result.current[0]).toBe(0);
     act(() => result.current[1]({ num: 100 }));

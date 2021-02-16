@@ -25,13 +25,10 @@ const tempStorage = {
   setItem: () => {},
 };
 
-const persist = <T = any>(
-  options: PersistOptions<T>,
-  createState: T | ReducerReturnType<T>,
-) => (
-  setState: StoreSetState<T>,
-  getState: StoreGetState<T>,
-): CommonStore<T> => {
+const persist = <State = any>(
+  options: PersistOptions<State>,
+  createState: State | ReducerReturnType<State>,
+) => (setState: StoreSetState<State>, getState: StoreGetState<State>): CommonStore<State> => {
   const {
     name,
     storage = typeof localStorage !== 'undefined' ? localStorage : tempStorage,
@@ -39,8 +36,7 @@ const persist = <T = any>(
     deserialize = JSON.parse,
   } = options;
 
-  const setStorage = async () =>
-    storage.setItem(name, await serialize(getState()));
+  const setStorage = async () => storage.setItem(name, await serialize(getState()));
 
   (async () => {
     try {
@@ -52,10 +48,10 @@ const persist = <T = any>(
   })();
 
   if (typeof createState === 'function') {
-    const {
-      state,
-      customSetState: dispatch,
-    } = (createState as ReducerReturnType<T>)(setState, getState);
+    const { state, customSetState: dispatch } = (createState as ReducerReturnType<State>)(
+      setState,
+      getState,
+    );
     const customSetState: DispatchType = (action: ReducerAction) => {
       dispatch(action);
       setStorage();
@@ -63,7 +59,7 @@ const persist = <T = any>(
 
     return { state, customSetState };
   } else {
-    const customSetState: StoreSetState<T> = (nextState: NextState<T>) => {
+    const customSetState: StoreSetState<State> = (nextState: NextState<State>) => {
       setState(nextState);
       setStorage();
     };
