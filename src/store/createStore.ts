@@ -60,8 +60,8 @@ const createStore = <State = any>(
     callbackList.push(callback);
 
     return () => {
-      const idx = callbackList.indexOf(callback);
-      callbackList.splice(idx, 1);
+      // remove added callback
+      callbackList.splice(callbackList.indexOf(callback), 1);
     };
   };
 
