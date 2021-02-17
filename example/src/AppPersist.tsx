@@ -1,7 +1,12 @@
 import React from 'react';
-import { createStore, persist, redux, useGlobalStore } from 'sagen';
+import { createStore, devTools, persist, redux, useGlobalStore } from 'sagen';
 
-export function testReducer(state: { num: number; str: string }, action: any) {
+interface TestReducer {
+  num: number;
+  str: string;
+}
+
+export function testReducer(state: TestReducer, action: any) {
   switch (action.type) {
     case 'INCREMENT':
       return { ...state, num: state.num + 1 };
@@ -11,20 +16,20 @@ export function testReducer(state: { num: number; str: string }, action: any) {
       return state;
   }
 }
-const globalStore = createStore<{ num: number, str: string }>(
-  persist(
-    {
-      name: 'local-persist-test',
-      storage: localStorage,
-    },
-    redux(testReducer, { num: 0, str: '' }),
+const globalStore = createStore<TestReducer>(
+  devTools(
+    persist(
+      {
+        name: 'local-persist-test',
+        storage: localStorage,
+      },
+      redux(testReducer, { num: 0, str: '' }),
+    ),
   ),
 );
 
 const AppPersist = () => {
-  const [object, dispatch] = useGlobalStore<{ num: number; str: string }>(
-    globalStore,
-  );
+  const [object, dispatch] = useGlobalStore<{ num: number; str: string }>(globalStore);
 
   return (
     <div>
