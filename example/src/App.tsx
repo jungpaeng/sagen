@@ -1,9 +1,9 @@
 import React from 'react';
 import AppPersist from './AppPersist';
-import { createStore, redux, useGlobalStore } from 'sagen';
+import { createStore, redux, useGlobalStore, devTools } from 'sagen';
 import globalStore from './store/globalStore';
 
-export function testReducer(state: number, action: any) {
+export function testReducer(state: any, action: any) {
   switch (action.type) {
     case 'INCREMENT':
       return state + 1;
@@ -14,7 +14,7 @@ export function testReducer(state: number, action: any) {
   }
 }
 
-const reduxStore = createStore(redux(testReducer, 0));
+const reduxStore = createStore(devTools(redux(testReducer, 0), 'changed testReducer'));
 
 const numberSelector = (state: { num: number }) => state.num;
 const stringSelector = (state: { str: string }) => state.str;
