@@ -259,6 +259,25 @@ const globalStore = createStore(
 );
 ```
 
+#### redux devtools
+
+'redux devtools' 확장 프로그램을 사용해 값의 변화를 확인할 수 있습니다.
+
+```jsx
+const globalStore = createStore(
+  devtools(
+    persist(
+      {
+        name: 'local-persist-test',
+        storage: localStorage,
+      },
+      redux(testReducer, 0),
+    ),
+    'prefix',
+  )
+);
+```
+
 ## 📜 License
 sagen is released under the [MIT license](https://github.com/jungpaeng/react-manage-global-state/blob/main/LICENSE).
 
