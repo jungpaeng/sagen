@@ -1,12 +1,5 @@
-import {
-  CommonStore,
-  DispatchType,
-  NextState,
-  ReducerAction,
-  ReducerReturnType,
-  StoreGetState,
-  StoreSetState,
-} from '../store/createStore';
+import { CommonStore, ReducerReturnType, StoreGetState, StoreSetState } from '../store/createStore';
+import createStateMiddleware from './createStateMiddleware';
 
 export interface StateStorage {
   getItem: (name: string) => string | null | Promise<string | null>;
@@ -47,25 +40,9 @@ const persist = <State = any>(
     }
   })();
 
-  if (typeof createState === 'function') {
-    const { state, customSetState: dispatch } = (createState as ReducerReturnType<State>)(
-      setState,
-      getState,
-    );
-    const customSetState: DispatchType = (action: ReducerAction) => {
-      dispatch(action);
-      setStorage();
-    };
+  const storageMiddleware = createStateMiddleware(setStorage);
 
-    return { state, customSetState };
-  } else {
-    const customSetState: StoreSetState<State> = (nextState: NextState<State>) => {
-      setState(nextState);
-      setStorage();
-    };
-
-    return { state: createState, customSetState };
-  }
+  return storageMiddleware(createState, setState, getState);
 };
 
 export default persist;
