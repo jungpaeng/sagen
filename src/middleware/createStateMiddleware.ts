@@ -18,11 +18,11 @@ export type CreateState<State = any> =
   | ReducerReturnType<State>
   | CreateStateFunction<State>;
 
-const createStateMiddleware = <State = any>(callback?: () => void) => (
+const createStateMiddleware = <State = any>(
   createState: CreateState<State>,
   setState: StoreSetState<State>,
   getState: StoreGetState<State>,
-) => {
+) => (callback?: () => void) => {
   if (typeof createState === 'function') {
     const { state, customSetState: dispatch } = (createState as ReducerReturnType<State>)(
       setState,

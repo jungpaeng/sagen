@@ -15,22 +15,20 @@ const devTools = <State = any>(createState: CreateState<State>, prefix?: string)
     reduxDevTools.init();
   } catch {}
 
-  const normalMiddleware = createStateMiddleware();
-
   return (setState: StoreSetState<State>, getState: StoreGetState<State>): CommonStore<State> => {
+    const stateMiddleware = createStateMiddleware(createState, setState, getState);
+
     if (!isReduxDevTools) {
       if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
         console.warn('Redux devtools is not installed/enabled');
       }
 
-      return normalMiddleware(createState, setState, getState);
+      return stateMiddleware();
     }
 
-    const devToolsMiddleware = createStateMiddleware(() => {
+    return stateMiddleware(() => {
       reduxDevTools.send(prefix, getState());
     });
-
-    return devToolsMiddleware(createState, setState, getState);
   };
 };
 

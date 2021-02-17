@@ -29,6 +29,7 @@ const persist = <State = any>(options: PersistOptions<State>, createState: Creat
     deserialize = JSON.parse,
   } = options;
 
+  const storageMiddleware = createStateMiddleware(createState, setState, getState);
   const setStorage = async () => storage.setItem(name, await serialize(getState()));
 
   (async () => {
@@ -40,9 +41,7 @@ const persist = <State = any>(options: PersistOptions<State>, createState: Creat
     }
   })();
 
-  const storageMiddleware = createStateMiddleware(setStorage);
-
-  return storageMiddleware(createState, setState, getState);
+  return storageMiddleware(setStorage);
 };
 
 export default persist;
