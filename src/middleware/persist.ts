@@ -1,5 +1,5 @@
-import { CommonStore, ReducerReturnType, StoreGetState, StoreSetState } from '../store/createStore';
-import createStateMiddleware from './createStateMiddleware';
+import { CommonStore, StoreGetState, StoreSetState } from '../store/createStore';
+import createStateMiddleware, { CreateState } from './createStateMiddleware';
 
 export interface StateStorage {
   getItem: (name: string) => string | null | Promise<string | null>;
@@ -18,10 +18,10 @@ const tempStorage = {
   setItem: () => {},
 };
 
-const persist = <State = any>(
-  options: PersistOptions<State>,
-  createState: State | ReducerReturnType<State>,
-) => (setState: StoreSetState<State>, getState: StoreGetState<State>): CommonStore<State> => {
+const persist = <State = any>(options: PersistOptions<State>, createState: CreateState<State>) => (
+  setState: StoreSetState<State>,
+  getState: StoreGetState<State>,
+): CommonStore<State> => {
   const {
     name,
     storage = typeof localStorage !== 'undefined' ? localStorage : tempStorage,

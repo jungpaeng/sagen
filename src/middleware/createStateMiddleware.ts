@@ -1,4 +1,5 @@
 import {
+  CommonStore,
   DispatchType,
   NextState,
   ReducerAction,
@@ -7,8 +8,18 @@ import {
   StoreSetState,
 } from '../store/createStore';
 
+type CreateStateFunction<State = any> = (
+  setState: StoreSetState<State>,
+  getState: StoreGetState<State>,
+) => CommonStore<State>;
+
+export type CreateState<State = any> =
+  | State
+  | ReducerReturnType<State>
+  | CreateStateFunction<State>;
+
 const createStateMiddleware = <State = any>(callback?: () => void) => (
-  createState: State | ReducerReturnType<State>,
+  createState: CreateState<State>,
   setState: StoreSetState<State>,
   getState: StoreGetState<State>,
 ) => {
