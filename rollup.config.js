@@ -52,13 +52,14 @@ function createESMConfig(input, output) {
 function createCommonJSConfig(input, output) {
   return {
     input,
-    output: { file: output, format: 'cjs', exports: 'named' },
+    preserveModules: true,
+    output: { dir: output, format: 'cjs', exports: 'named' },
     plugins: createPluginConfig({ ie: 11 }),
     external,
   };
 }
 
 export default [
-  createESMConfig('src/index.ts', 'dist/index.js'),
-  createCommonJSConfig('src/index.ts', 'dist/index.cjs.js'),
+  createESMConfig('src/index.ts', 'dist/index.esm.js'),
+  createCommonJSConfig('src/index.ts', 'dist'),
 ];
