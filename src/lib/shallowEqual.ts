@@ -28,7 +28,7 @@ function isDeepEqual(prev: any, next: any) {
   return true;
 }
 
-function shallowEqual(prev: any, next: any) {
+export function shallowEqual(prev: any, next: any) {
   if (is(prev, next)) {
     return true;
   } else if (isPrimitiveType(prev) || isPrimitiveType(next)) {
@@ -38,5 +38,3 @@ function shallowEqual(prev: any, next: any) {
 
   return isDeepEqual(prev, next);
 }
-
-export default shallowEqual;

@@ -25,11 +25,11 @@ $ yarn add sagen
 
 ## 🏃 시작하기
 
+sagen은 Provider 없이 multiple store를 제공하는 상태 관리 라이브러리입니다.
+
 #### store 만들기
 
-store를 생성해 state를 관리할 수 있습니다!
-
-store는 어떠한 값이든 저장할 수 있으며, `useGlobalStore` hook을 사용하면 `state` 값과 `setState` 함수를 반환받을 수 있습니다.
+store를 생성해 state를 관리할 수 있습니다.
 
 ```typescript
 import { createStore } from 'sagen';
@@ -39,9 +39,9 @@ const globalStore = createStore({ num: 0, str: '' });
 
 #### state 값 관리
 
-`useGlobalStore` hook을 사용해 값을 관리할 수 있습니다!
+`useGlobalStore` hook을 사용하면 `state` 값과 `setState` 함수를 반환받을 수 있습니다.
 
-상태를 관리하기 위해 `Provider`를 추가하지 않아도 됩니다.
+이는 `setState`와 사용 방법이 같고 동기로 동작합니다.
 
 ```jsx
 import React from 'react';
@@ -62,6 +62,36 @@ const App = () => {
     </div>
   );
 };
+```
+
+#### middleware for sagen
+
+**sagen은 Redux의 미들웨어를 호환합니다.**
+
+다음은 redux의 간단한 logger middleware 입니다.
+
+```ts
+import { createStore, composeMiddleware } from 'sagen-core';
+
+const loggerMiddleware = store => next => action => {
+  console.log('현재 상태', store.getState());
+  console.log('액션', action);
+  next(action);
+  console.log('다음 상태', store.getState());
+}
+
+const store = createStore(0, composeMiddleware(loggerMiddleware));
+const [state, setState] = useGlobalStore(store);
+
+setState(1);
+```
+
+**console log**
+
+```console
+현재 상태,  0
+액션, 1
+다음 상태,  1
 ```
 
 ## Recipes
@@ -119,34 +149,28 @@ const App = () => {
 };
 ```
 
-#### customSetState
+#### action, dispatch
 
-인자를 `createStore` 함수에 넘길 때 함수의 형태로 넘길 수 있습니다.
-
-내부적으로 첫 번째 인자는 `set` 함수, 두 번째 인자는 `get` 함수를 전달받습니다. 이를 이용해 `customSetState` 함수를 작성할 수 있습니다.
+`createStore` 함수로 생성한 `store`에 `action`을 추가할 수 있습니다.
 
 ```typescript jsx
-const testStore = createStore((set) => {
-  return {
-    state: {
-      num: 1,
-      str: 'test',
-    },
-    customSetState: {
-      setNum: (num: number) => set((prev: any) => ({ ...prev, num })),
-    },
-  };
-});
+const store = createStore(0);
+const storeDispatch = createDispatch(store);
+const storeAction = store.setAction((getter) => ({
+  INCREMENT: () => getter() + 1,
+  ADD: (num) => getter() + num,
+}));
 
 const App = () => {
-  const [state, setState] = useGlobalStore(testStore);
-  const { num, str } = state;
-  const { setNum } = setState;
+  const [state, setState] = useGlobalStore(store);
 
   return (
     <div className="App">
-      <p>number state: {num}</p>
-      <button onClick={() => setNum(100)}>
+      <p>number state: {state}</p>
+      <button onClick={() => storeDispatch(storeAction.INCREMENT)}>
+        ClickMe
+      </button>
+      <button onClick={() => storeDispatch(storeAction.ADD, 100)}>
         ClickMe
       </button>
     </div>
@@ -154,21 +178,9 @@ const App = () => {
 };
 ```
 
-위와 같이 작성하면 `useGlobalStore`의 두 번째 인자에 `customStore`가 반환됩니다.
+위와 같이 `store`에 `action`을 추가한 뒤, `dispatch`를 통해 사용할 수 있습니다.
 
-전달받은 `setNum`에서 prev 값을 이용한 계산을 하고 싶다고 한다면 아래와 같이 작성되어야 합니다.
-
-```typescript jsx
-customSetState: {
-  setNum: (numFunc) => {
-    if (typeof numFunc === 'function') {
-      return set((prev: any) => ({ ...prev, num: numFunc(prev.num) }));
-    } else {
-      return set((prev: any) => ({ ...prev, numFunc }));
-    }
-  }
-}
-```
+이것은 `customSetState`를 더 쉽게 작성할 수 있게 해줍니다.
 
 #### shallowEqual
 
@@ -194,89 +206,9 @@ const App = () => {
 
 #### React 없이 사용하기
 
-`sagen`의 `createStore`는 React에 종속되어 있지 않습니다. 사용법 역시 React에서 사용하는 것과 동일합니다.
+`sagen`은 React 없이 사용할 수 있습니다.
 
-## Middleware
-
-`sagen`은 데이터를 저장하는 방법 등에 대해 관리할 수 있는 `middleware`를 제공합니다.
-
-`createStore`에서 함수를 받게 될 경우, `getState` 값과 `setState` 값을 인자로 넘겨 실행시키며, 이를 이용해 middleware를 작성할 수 있습니다.
-
-#### redux middleware
-
-`redux`와 비슷한 방법으로 state를 관리하려면 `redux` middleware를 사용하면 됩니다.
-
-```jsx
-export function testReducer(state, action) {
-  switch (action.type) {
-    case 'INCREMENT':
-      return state + 1;
-    case 'DECREMENT':
-      return state - 1;
-    default:
-      return state;
-  }
-};
-
-const reduxStore = createStore(redux(testReducer, 0));
-```
-
-`redux` 함수의 첫 번째 함수로 `reducer` 함수, 두 번째 인자로 `defaultValue`를 넘겨주면 됩니다.
-
-이 store를 `useGlobalStore`로 넘기게 된다면 `[state, dispatch]`를 반환합니다.
-`useReducer` hook을 사용해본 경험이 있다면 더 빠르게 적용해볼 수 있을 것입니다.
-
-```jsx
-const App = () => {
-  const [state, dispatch] = useGlobalStore(reduxStore);
-
-  return (
-    <div className="App">
-      <p>state: {state}</p>
-      <button
-        onClick={() => dispatch({ type: 'INCREMENT' })}
-      >
-        ClickMe
-      </button>
-    </div>
-  );
-}
-```
-
-#### persist middleware
-
-storage에 데이터를 저장해 값을 불러올 수 있습니다.
-
-```jsx
-const globalStore = createStore(
-  persist(
-    {
-      name: 'local-persist-test',
-      storage: localStorage,
-    },
-    redux(testReducer, 0),
-  ),
-);
-```
-
-#### redux devtools
-
-'redux devtools' 확장 프로그램을 사용해 값의 변화를 확인할 수 있습니다.
-
-```jsx
-const globalStore = createStore(
-  devtools(
-    persist(
-      {
-        name: 'local-persist-test',
-        storage: localStorage,
-      },
-      redux(testReducer, 0),
-    ),
-    'prefix',
-  )
-);
-```
+[sagen-core](https://www.npmjs.com/package/sagen-core) 라이브러리를 사용해보세요.
 
 ## 📜 License
 sagen is released under the [MIT license](https://github.com/jungpaeng/react-manage-global-state/blob/main/LICENSE).

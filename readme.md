@@ -25,13 +25,11 @@ $ yarn add sagen
 
 ## 🏃 Quick Start
 
+sagen is a state management library that provides multiple stores without a provider.
+
 #### create store
 
-
-You can create a store to manage the state!
-
-The store can store any value, and if you use the `useGlobalStore` hook,
-you can return the `state` value and the `setState` function.
+You can create a store to manage state.
 
 ```typescript
 import { createStore } from 'sagen';
@@ -41,9 +39,9 @@ const globalStore = createStore({ num: 0, str: '' });
 
 #### management state
 
-You can manage values using the `useGlobalStore` hook!
+If you use the `useGlobalStore` hook, you can return the `state` value and the `setState` function.
 
-You don't need to add `Provider` to manage state.
+It is used in the same way as `setState` and works synchronously.
 
 ```jsx
 import React from 'react';
@@ -64,6 +62,36 @@ const App = () => {
     </div>
   );
 };
+```
+
+#### middleware for sagen
+
+**sagen is compatible with Redux's middleware.**
+
+The following is a simple redux logger middleware.
+
+```ts
+import { createStore, composeMiddleware } from 'sagen-core';
+
+const loggerMiddleware = store => next => action => {
+  console.log('현재 상태', store.getState());
+  console.log('액션', action);
+  next(action);
+  console.log('다음 상태', store.getState());
+}
+
+const store = createStore(0, composeMiddleware(loggerMiddleware));
+const [state, setState] = useGlobalStore(store);
+
+setState(1);
+```
+
+**console log**
+
+```console
+현재 상태,  0
+액션, 1
+다음 상태,  1
 ```
 
 ## Recipes
@@ -123,34 +151,28 @@ const App = () => {
 };
 ```
 
-#### customSetState
+#### action, dispatch
 
-When passing an argument to the `createStore` function, it can be passed in the form of a function.
-
-Internally, the first argument is a `set` function and the second argument is a `get` function. You can use this to write a `customSetState` function.
+You can add `action` to `store` created with `createStore` function.
 
 ```typescript jsx
-const testStore = createStore((set) => {
-  return {
-    state: {
-      num: 1,
-      str: 'test',
-    },
-    customSetState: {
-      setNum: (num: number) => set((prev: any) => ({ ...prev, num })),
-    },
-  };
-});
+const store = createStore(0);
+const storeDispatch = createDispatch(store);
+const storeAction = store.setAction((getter) => ({
+  INCREMENT: () => getter() + 1,
+  ADD: (num) => getter() + num,
+}));
 
 const App = () => {
-  const [state, setState] = useGlobalStore(testStore);
-  const { num, str } = state;
-  const { setNum } = setState;
+  const [state, setState] = useGlobalStore(store);
 
   return (
     <div className="App">
-      <p>number state: {num}</p>
-      <button onClick={() => setNum(100)}>
+      <p>number state: {state}</p>
+      <button onClick={() => storeDispatch(storeAction.INCREMENT)}>
+        ClickMe
+      </button>
+      <button onClick={() => storeDispatch(storeAction.ADD, 100)}>
         ClickMe
       </button>
     </div>
@@ -158,9 +180,9 @@ const App = () => {
 };
 ```
 
-If written as above, `customStore` is returned as the second parameter of `useGlobalStore`.
+After adding `action` to `store` as above, you can use it through `dispatch`.
 
-If you want to calculate using the prev value in the received `setNum`, it should be written as follows.
+This makes writing `customSetState` easier.
 
 ```typescript jsx
 customSetState: {
@@ -199,90 +221,9 @@ const App = () => {
 
 #### Use sagen without React
 
-The `createStore` of `sagen` is not dependent on React. Usage is also the same as in React.
+`sagen` can be used without React.
 
-## Middleware
-
-`sagen` provides `middleware` to manage how to store data, etc.
-
-When a function is received from `createStore`,
-it is executed by passing `getState` and `setState` values as arguments, and middleware can be created using them.
-
-#### redux middleware
-
-To manage state in a similar way to `redux`, you can use `redux` middleware.
-
-```jsx
-export function testReducer(state, action) {
-  switch (action.type) {
-    case 'INCREMENT':
-      return state + 1;
-    case 'DECREMENT':
-      return state - 1;
-    default:
-      return state;
-  }
-};
-
-const reduxStore = createStore(redux(testReducer, 0));
-```
-
-Pass the `reducer` function as the first function of the `redux` function and the `defaultValue` as the second argument.
-
-If this store is passed to `useGlobalStore`, it will return `[state, dispatch]`.
-If you have used the `useReducer` hook, you will be able to apply it faster.
-
-```jsx
-const App = () => {
-  const [state, dispatch] = useGlobalStore(reduxStore);
-
-  return (
-    <div className="App">
-      <p>state: {state}</p>
-      <button
-        onClick={() => dispatch({ type: 'INCREMENT' })}
-      >
-        ClickMe
-      </button>
-    </div>
-  );
-}
-```
-
-#### persist middleware
-
-You can store data in storage and load values.
-
-```jsx
-const globalStore = createStore(
-  persist(
-    {
-      name: 'local-persist-test',
-      storage: localStorage,
-    },
-    redux(testReducer, 0),
-  ),
-);
-```
-
-#### redux devtools
-
-You can use the 'redux devtools' extension to see the value change.
-
-```jsx
-const globalStore = createStore(
-  devtools(
-    persist(
-      {
-        name: 'local-persist-test',
-        storage: localStorage,
-      },
-      redux(testReducer, 0),
-    ),
-    'prefix',
-  )
-);
-```
+Try the [sagen-core](https://www.npmjs.com/package/sagen-core) library.
 
 ## 📜 License
 sagen is released under the [MIT license](https://github.com/jungpaeng/react-manage-global-state/blob/main/LICENSE).
