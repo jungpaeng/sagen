@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react-hooks';
-import { createDispatch, createStore, useGlobalStore } from './index';
+import { createDispatch, createStore, useGlobalStore } from '..';
 
 describe('useGlobalStore', () => {
   it('should return default value', () => {
