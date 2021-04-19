@@ -94,6 +94,29 @@ action, 1
 next state,  1
 ```
 
+#### Subscribe event at store update
+
+When an update occurs, an event can be executed, and the next value is not affected.
+
+```ts
+import { createStore } from 'sagen';
+
+const store = createStore(0);
+
+// Returns a function that unsubscribes from event.
+const removeEvent = store.onSubscribe((newState, prevState) => {
+  console.log(`prev: ${prevState}, new: ${newState}`);
+});
+
+const [state, setState] = useGlobalStore(store);
+setState(1);
+// [console.log] prev: 0, new: 1
+
+removeEvent();
+setState(0);
+// [console.log] Empty
+```
+
 ## Recipes
 
 #### state selector

@@ -94,6 +94,29 @@ setState(1);
 다음 상태,  1
 ```
 
+#### Subscribe event at store update
+
+업데이트가 발생할 때 event를 실행시킬 수 있으며, next value에 영향을 끼치지 않습니다.
+
+```ts
+import { createStore } from 'sagen';
+
+const store = createStore(0);
+
+// event 구독을 취소하는 함수를 반환합니다.
+const removeEvent = store.onSubscribe((newState, prevState) => {
+  console.log(`prev: ${prevState}, new: ${newState}`);
+});
+
+const [state, setState] = useGlobalStore(store);
+setState(1);
+// [console.log] prev: 0, new: 1
+
+removeEvent();
+setState(0);
+// [console.log] Empty
+```
+
 ## Recipes
 
 #### state selector
