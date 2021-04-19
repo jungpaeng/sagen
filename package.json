@@ -1,6 +1,6 @@
 {
   "name": "sagen",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Management global state with out provider",
   "main": "index.js",
   "module": "index.esm.js",
@@ -68,6 +68,8 @@
     "react": ">=16.8"
   },
   "keywords": [
+    "frontend",
+    "front-end",
     "react",
     "state",
     "manager",
