@@ -1,5 +1,5 @@
 import React from 'react';
-import { CreateStore } from 'sagen-core';
+import { CreateStore, SetValueFunction } from 'sagen-core';
 
 function defaultEqualityFn(prev: any, next: any) {
   return prev === next;
@@ -9,7 +9,7 @@ export function useGlobalStore<State = any>(
   store: CreateStore<State>,
   selector?: (value: State) => any,
   equalityFn = defaultEqualityFn,
-): [State, (state: any) => any] {
+): [State, (state: State | SetValueFunction<State>) => void] {
   const [, forceUpdate] = React.useReducer((curr: number) => curr + 1, 0) as [never, () => void];
   const selectedState = React.useCallback((state: State) => (selector ? selector(state) : state), [
     selector,
