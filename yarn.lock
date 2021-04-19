@@ -6031,10 +6031,10 @@ safe-regex@^1.1.0:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
-sagen-core@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/sagen-core/-/sagen-core-0.3.0.tgz#3d063880068d0cebecccebbbe55ffb2a802c9bc3"
-  integrity sha512-x/pusH9Oo41+c8ByviiTzAln4ftOJlrXHt78whTpmMzm9ncfG4lwfAXectYrv34gD0UUohb6qNJmTQiN9SFGCA==
+sagen-core@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/sagen-core/-/sagen-core-0.3.1.tgz#25ea1d9d0371b227a7a04ca76bfa660622674925"
+  integrity sha512-NrRJGkE6eb3MJA68lqpT/kkA6/A18RXUYdY3PMerE5vGD4R3GvH6555aeNtEWjtSWmcaFyfBPn3Qdj6a2SXGrQ==
 
 sane@^4.0.3:
   version "4.1.0"
