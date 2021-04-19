@@ -71,13 +71,13 @@ const App = () => {
 The following is a simple redux logger middleware.
 
 ```ts
-import { createStore, composeMiddleware } from 'sagen-core';
+import { createStore, composeMiddleware } from 'sagen';
 
 const loggerMiddleware = store => next => action => {
-  console.log('현재 상태', store.getState());
-  console.log('액션', action);
+  console.log('current state', store.getState());
+  console.log('action', action);
   next(action);
-  console.log('다음 상태', store.getState());
+  console.log('next state', store.getState());
 }
 
 const store = createStore(0, composeMiddleware(loggerMiddleware));
@@ -89,9 +89,9 @@ setState(1);
 **console log**
 
 ```console
-현재 상태,  0
-액션, 1
-다음 상태,  1
+current state,  0
+action, 1
+next state,  1
 ```
 
 ## Recipes

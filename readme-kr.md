@@ -71,7 +71,7 @@ const App = () => {
 다음은 redux의 간단한 logger middleware 입니다.
 
 ```ts
-import { createStore, composeMiddleware } from 'sagen-core';
+import { createStore, composeMiddleware } from 'sagen';
 
 const loggerMiddleware = store => next => action => {
   console.log('현재 상태', store.getState());
