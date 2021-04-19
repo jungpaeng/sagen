@@ -9754,10 +9754,17 @@ safe-regex@^1.1.0:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
-sagen@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/sagen/-/sagen-1.1.1.tgz#f851b33b5d6ca6f15264604068491c3652537b30"
-  integrity sha512-G7hOsJluEwY+/cD8exT/LDC48GwM2IajMzZvu8PuXCGPsmzcFo9/mlC6XYOsIIOB//0xGYfr6eAuobMEcAxynA==
+sagen-core@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/sagen-core/-/sagen-core-0.3.1.tgz#25ea1d9d0371b227a7a04ca76bfa660622674925"
+  integrity sha512-NrRJGkE6eb3MJA68lqpT/kkA6/A18RXUYdY3PMerE5vGD4R3GvH6555aeNtEWjtSWmcaFyfBPn3Qdj6a2SXGrQ==
+
+sagen@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/sagen/-/sagen-2.0.1.tgz#1c1c6e65467146b6eaef230318b03acc2086c38a"
+  integrity sha512-GDtctS+izB6/qfcw9gDtIwa3SkYNgx+IZDu1qyowB33H1iqaQoi6Lto5/xMt5xjQzg8qCYCDiicfROc1BK6rlg==
+  dependencies:
+    sagen-core "^0.3.1"
 
 sane@^4.0.3:
   version "4.1.0"
