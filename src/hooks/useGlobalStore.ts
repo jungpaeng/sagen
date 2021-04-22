@@ -1,5 +1,6 @@
 import React from 'react';
 import { CreateStore, SetValueFunction } from 'sagen-core';
+import { useSetSagenState } from './useSetSagenState';
 
 function defaultEqualityFn(prev: any, next: any) {
   return prev === next;
@@ -10,6 +11,7 @@ export function useGlobalStore<State = any>(
   selector?: (value: State) => any,
   equalityFn = defaultEqualityFn,
 ): [State, (state: State | SetValueFunction<State>) => void] {
+  const setSagenState = useSetSagenState(store);
   const [, forceUpdate] = React.useReducer((curr: number) => curr + 1, 0) as [never, () => void];
   const selectedState = React.useCallback((state: State) => (selector ? selector(state) : state), [
     selector,
@@ -26,5 +28,5 @@ export function useGlobalStore<State = any>(
     return stateChange;
   }, [selectedState, equalityFn, store]);
 
-  return [selectedState(store.getState()), store.setState];
+  return [selectedState(store.getState()), setSagenState];
 }
