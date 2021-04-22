@@ -11,9 +11,9 @@
 ![dependency-count](https://badgen.net/bundlephobia/dependency-count/sagen@latest)
 ![tree-shaking](https://badgen.net/bundlephobia/tree-shaking/sagen@latest)
 
-[Korean](https://github.com/jungpaeng/sagen/blob/main/readme-kr.md) | [English](https://github.com/jungpaeng/sagen/blob/main/readme.md)  
+[Korean](https://github.com/jungpaeng/sagen/blob/main/readme-kr.md) | [English](https://github.com/jungpaeng/sagen/blob/main/readme.md)
 
-## ⚙ Installation
+## ⚙ How to install
 #### npm
 ```bash
 $ npm install --save sagen
@@ -23,109 +23,102 @@ $ npm install --save sagen
 $ yarn add sagen
 ```
 
-## 🏃 Quick Start
+## 🏃 Getting started
 
 sagen is a state management library that provides multiple stores without a provider.
 
-#### create store
+### 1. Create a store
 
-You can create a store to manage state.
+You can manage the state by creating a `store`. The store offers the following features:
+
+- State change detection when used in React
+- Optimized rendering by custom store state comparison operation
+- Standardize store management with a pattern similar to reducer
+
+#### 1-a. createStore
+
+Non-function values can be stored in `store`.
+
+params|isRequired|type|return
+---|---|---|---
+state|true|Non-function|Store
+middleware|false|Middleware|
 
 ```typescript
 import { createStore } from 'sagen';
 
-const globalStore = createStore({ num: 0, str: '' });
+const numberStore = createStore(0);
+const multipleStore = createStore({ num: 0, str: '' });
 ```
 
-#### management state
+### 2. state value management
 
-If you use the `useGlobalStore` hook, you can return the `state` value and the `setState` function.
+The `state` value must be managed using the `useGlobalStore` Hook so that React can detect it.
+The `useGlobalStore` Hook uses the same method as the `useState` Hook, but works synchronously.
 
-It is used in the same way as `setState` and works synchronously.
+`useGlobalStore` returns `[getter, setter]`, and each can be returned using the following Hooks.
+
+- getter: useSagenState
+- setter: useSetSagenState
+
+#### 2-a. useSagenState
+
+`useSagenState` Hook returns `getter` of `store`.
+
+When the returned `getter` value changes, React detects it.
+
+params|isRequired|type|return
+---|---|---|---
+store|true|Store|getter
+
+#### 2-b. useSetSagenState
+
+`useSetSagenState` Hook returns `setter` of `store`.
+
+React can detect the change only by modifying the value using the returned `setter`.
+
+params|isRequired|type|return
+---|---|---|---
+store|true|Store|setter
+
+#### 2-c. useGlobalStore
+
+The `useGlobalStore` Hook returns `getter` and `setter` of `store`.
+
+params|isRequired|type|return
+---|---|---|---
+store|true|Store|[getter, setter]
 
 ```jsx
 import React from 'react';
 import { useGlobalStore } from 'sagen';
 
+const numberStore = createStore(0);
+
 const App = () => {
-  const [state, setState] = useGlobalStore(globalStore);
+  const [num, setNum] = useGlobalStore(numberStore);
 
   return (
     <div>
-      <p>number: {state.num}</p>
-      <p>string: {state.str}</p>
-      <button
-        onClick={() => setState(curr => ({ ...curr, num: curr.num + 1 }))}
-      >
-        click me
+      <p>current: {num}</p>
+      <button onClick={() => setNum(100)}>
+        Set 100
+      </button>
+      <button onClick={() => setNum(curr => curr + 1)}>
+        Increment
       </button>
     </div>
   );
 };
 ```
 
-#### middleware for sagen
-
-**sagen is compatible with Redux's middleware.**
-
-The following is a simple redux logger middleware.
-
-```ts
-import { createStore, composeMiddleware } from 'sagen';
-
-const loggerMiddleware = store => next => action => {
-  console.log('current state', store.getState());
-  console.log('action', action);
-  next(action);
-  console.log('next state', store.getState());
-}
-
-const store = createStore(0, composeMiddleware(loggerMiddleware));
-const [state, setState] = useGlobalStore(store);
-
-setState(1);
-```
-
-**console log**
-
-```console
-current state,  0
-action, 1
-next state,  1
-```
-
-#### Subscribe event at store update
-
-When an update occurs, an event can be executed, and the next value is not affected.
-
-```ts
-import { createStore } from 'sagen';
-
-const store = createStore(0);
-
-// Returns a function that unsubscribes from event.
-const removeEvent = store.onSubscribe((newState, prevState) => {
-  console.log(`prev: ${prevState}, new: ${newState}`);
-});
-
-const [state, setState] = useGlobalStore(store);
-setState(1);
-// [console.log] prev: 0, new: 1
-
-removeEvent();
-setState(0);
-// [console.log] Empty
-```
-
-## Recipes
-
-#### state selector
-
+#### 2-d. state selector
 
 When getting the state value, you can process the state value by passing the `selector` function.
 
-Basically, since the `===` operator compares the old value and the new value,
-it is recommended to use only the required value in `state` as shown below.
+Basically, the operator `===` compares the old value to the new value.
+
+It is recommended to use only the values required for `state` as shown below.
 
 ```jsx
 import React from 'react';
@@ -174,9 +167,71 @@ const App = () => {
 };
 ```
 
-#### action, dispatch
+#### 2-e. shallowEqual
 
-You can add `action` to `store` created with `createStore` function.
+For values that cannot be compared with `===`, such as objects or arrays, you can pass the `shallowEqual` function to compare the values.
+
+In the case of objects or arrays, you must pass the `shallowEqual` value to optimize React rendering through value comparison.
+
+```jsx
+import React from 'react';
+import { createStore, useGlobalStore, shallowEqual } from 'sagen';
+
+const globalStore = createStore({ num: 0, str: '' });
+const storeSelector = state => state;
+
+const App = () => {
+  const [state, setState] = useGlobalStore(globalStore, storeSelector, shallowEqual);
+
+  return (
+    <div>
+      ...
+    </div>
+  );
+};
+```
+
+### 3. Dispatch
+
+You can manage it by adding a `action` to the `store` created with the `createStore` function.
+
+#### 3-a. setAction
+
+Before using `Dispatch`, you need to define `Action`.
+
+params|isRequired|type|return
+---|---|---|---
+action|true|(getter) => Action|Array\<keyof Action\>
+
+```typescript jsx
+const store = createStore(0);
+const storeAction = store.setAction((getter) => ({
+  INCREMENT: () => getter() + 1,
+  ADD: (num) => getter() + num,
+}));
+```
+
+#### 3-a. createDispatch
+
+The `dispatch` function passes the value created through `action` as an argument.
+
+params|isRequired|type|return
+---|---|---|---
+store|true|Store|Dispatch
+
+```typescript jsx
+const store = createStore(0);
+const storeDispatch = createDispatch(store);
+const storeAction = store.setAction((getter) => ({
+  INCREMENT: () => getter() + 1,
+  ADD: (num) => getter() + num,
+}));
+```
+
+```typescript jsx
+storeDispatch(storeAction.INCREMENT)
+storeDispatch(storeAction.ADD, 100)
+```
 
 ```typescript jsx
 const store = createStore(0);
@@ -203,46 +258,69 @@ const App = () => {
 };
 ```
 
-After adding `action` to `store` as above, you can use it through `dispatch`.
 
-This makes writing `customSetState` easier.
+### 4. middleware
 
-```typescript jsx
-customSetState: {
-  setNum: (numFunc) => {
-    if (typeof numFunc === 'function') {
-      return set((prev: any) => ({ ...prev, num: numFunc(prev.num) }));
-    } else {
-      return set((prev: any) => ({ ...prev, numFunc }));
-    }
-  }
+**sagen is compatible with Redux middleware.**
+
+#### 4-a. composeMiddleware
+
+Here is a simple logger middleware.
+
+You can combine multiple `middleware` using `composeMiddleware`, and pass it to the second argument of `createStore`.
+
+```ts
+import { createStore, composeMiddleware } from 'sagen';
+
+const loggerMiddleware = store => next => action => {
+  console.log('Current state', store.getState());
+  console.log('Action', action);
+  next(action);
+  console.log('Next state', store.getState());
 }
+
+const store = createStore(0, composeMiddleware(loggerMiddleware));
+const [state, setState] = useGlobalStore(store);
+
+setState(1);
 ```
 
-#### shallowEqual
+**console log**
 
-For values that cannot be compared with `===`, such as objects or arrays,
-you can pass the `shallowEqual` function to compare the values.
-
-```jsx
-import React from 'react';
-import { createStore, useGlobalStore, shallowEqual } from 'sagen';
-
-const globalStore = createStore({ num: 0, str: '' });
-const storeSelector = state => state;
-
-const App = () => {
-  const [state, setState] = useGlobalStore(globalStore, storeSelector, shallowEqual);
-
-  return (
-    <div>
-      ...
-    </div>
-  );
-};
+```console
+Current state, 0
+Action, 1
+Next state, 1
 ```
 
-#### Use sagen without React
+### 5. Subscribe to events
+
+You can trigger an event when an update occurs.
+
+This event cannot affect the state value.
+
+#### 5-a. onSubscribe
+
+```ts
+import { createStore } from 'sagen';
+
+const store = createStore(0);
+
+// Returns a function that unsubscribes from event.
+const removeEvent = store.onSubscribe((newState, prevState) => {
+  console.log(`prev: ${prevState}, new: ${newState}`);
+});
+
+const [state, setState] = useGlobalStore(store);
+setState(1);
+// [console.log] prev: 0, new: 1
+
+removeEvent();
+setState(0);
+// [console.log] Empty
+```
+
+## Using without React
 
 `sagen` can be used without React.
 
