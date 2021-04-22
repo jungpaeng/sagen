@@ -6,9 +6,9 @@ import {
   ListItemText,
   ListItemSecondaryAction,
 } from '@material-ui/core';
-import { useGlobalStore } from 'sagen';
+import { useSetSagenState } from 'sagen';
 import DeleteOutlined from '@material-ui/icons/DeleteOutlined';
-import todoListStore, { TodoItem } from '../store/todoListStore';
+import { todoListStore, TodoItem } from '../store/todoListStore';
 
 export type TodoListItemProps = {
   idx: number;
@@ -18,7 +18,7 @@ export type TodoListItemProps = {
 };
 
 function TodoListItem(props: TodoListItemProps) {
-  const [_, setTodoList] = useGlobalStore(todoListStore);
+  const setTodoList = useSetSagenState(todoListStore);
 
   const onCheckBoxToggle = () => {
     setTodoList((curr: TodoItem[]) =>

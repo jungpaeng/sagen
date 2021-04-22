@@ -1,17 +1,21 @@
 import React from 'react';
-import { useGlobalStore } from 'sagen';
+import { useSetSagenState } from 'sagen';
 import { TextField, Paper, Button, Grid } from '@material-ui/core';
-import todoListStore, { TodoItem } from '../store/todoListStore';
+import { userTodoListStore } from '../store/userTodoListStore';
 
 function AddTodo() {
-  const [_, setTodoList] = useGlobalStore(todoListStore);
+  const setUserTodoList = useSetSagenState(userTodoListStore);
   const [inputValue, setInputValue] = React.useState('');
 
-  const onInputChange = (event: any) => setInputValue(event.target.value);
-  const addTodoItem = () => {
-    setTodoList((curr: TodoItem[]) => [...curr, { text: inputValue, checked: false }]);
+  const onInputChange = React.useCallback((event: any) => setInputValue(event.target.value), []);
+  const addTodoItem = React.useCallback(() => {
+    setUserTodoList((curr) => ({
+      ...curr,
+      user: { ...curr.user, name: inputValue },
+      todoList: [...curr.todoList, { text: inputValue, checked: false }],
+    }));
     setInputValue('');
-  };
+  }, [inputValue, setUserTodoList]);
 
   return (
     <Paper style={{ margin: 16, padding: 16 }}>

@@ -9283,13 +9283,9 @@ react-transition-group@^4.4.0:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@^17.0.1:
-  version "17.0.1"
-  resolved "https://registry.yarnpkg.com/react/-/react-17.0.1.tgz#6e0600416bd57574e3f86d92edba3d9008726127"
-  integrity sha512-lG9c9UuMHdcAexXtigOZLX8exLWkW0Ku29qPRU8uhF2R9BN96dLCt0psvzPLlHc5OWkgymP3qwTRgbnw5BKx3w==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
+"react@link:../node_modules/react":
+  version "0.0.0"
+  uid ""
 
 read-pkg-up@^2.0.0:
   version "2.0.0"
@@ -9759,12 +9755,9 @@ sagen-core@^0.3.1:
   resolved "https://registry.yarnpkg.com/sagen-core/-/sagen-core-0.3.1.tgz#25ea1d9d0371b227a7a04ca76bfa660622674925"
   integrity sha512-NrRJGkE6eb3MJA68lqpT/kkA6/A18RXUYdY3PMerE5vGD4R3GvH6555aeNtEWjtSWmcaFyfBPn3Qdj6a2SXGrQ==
 
-sagen@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/sagen/-/sagen-2.0.1.tgz#1c1c6e65467146b6eaef230318b03acc2086c38a"
-  integrity sha512-GDtctS+izB6/qfcw9gDtIwa3SkYNgx+IZDu1qyowB33H1iqaQoi6Lto5/xMt5xjQzg8qCYCDiicfROc1BK6rlg==
-  dependencies:
-    sagen-core "^0.3.1"
+"sagen@link:../dist":
+  version "0.0.0"
+  uid ""
 
 sane@^4.0.3:
   version "4.1.0"
