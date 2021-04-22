@@ -5,11 +5,11 @@ function defaultEqualityFn(prev: any, next: any) {
   return prev === next;
 }
 
-export function useSagenState<State = any>(
+export function useSagenState<Selected = never, State = any>(
   store: CreateStore<State>,
   selector?: (value: State) => any,
   equalityFn = defaultEqualityFn,
-): State {
+): [Selected] extends [never] ? State : Selected {
   const [, forceUpdate] = React.useReducer((curr: number) => curr + 1, 0) as [never, () => void];
   const selectedState = React.useCallback((state: State) => (selector ? selector(state) : state), [
     selector,
