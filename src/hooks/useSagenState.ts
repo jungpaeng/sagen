@@ -9,7 +9,7 @@ export function useSagenState<State = any>(
   store: CreateStore<State>,
   selector?: (value: State) => any,
   equalityFn = defaultEqualityFn,
-) {
+): State {
   const [, forceUpdate] = React.useReducer((curr: number) => curr + 1, 0) as [never, () => void];
   const selectedState = React.useCallback((state: State) => (selector ? selector(state) : state), [
     selector,
