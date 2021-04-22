@@ -1,32 +1,15 @@
 import React from 'react';
 import { CreateStore, SetValueFunction } from 'sagen-core';
+import { useSagenState } from './useSagenState';
 import { useSetSagenState } from './useSetSagenState';
-
-function defaultEqualityFn(prev: any, next: any) {
-  return prev === next;
-}
 
 export function useGlobalStore<State = any>(
   store: CreateStore<State>,
   selector?: (value: State) => any,
-  equalityFn = defaultEqualityFn,
+  equalityFn?: (prev: State, next: State) => boolean,
 ): [State, (state: State | SetValueFunction<State>) => void] {
+  const sagenState = useSagenState(store, selector, equalityFn);
   const setSagenState = useSetSagenState(store);
-  const [, forceUpdate] = React.useReducer((curr: number) => curr + 1, 0) as [never, () => void];
-  const selectedState = React.useCallback((state: State) => (selector ? selector(state) : state), [
-    selector,
-  ]);
 
-  React.useLayoutEffect(() => {
-    // change callback
-    const stateChange = store.onSubscribe((newState: State, prevState: State) => {
-      if (!equalityFn(selectedState(newState), selectedState(prevState))) {
-        forceUpdate();
-      }
-    });
-
-    return stateChange;
-  }, [selectedState, equalityFn, store]);
-
-  return [selectedState(store.getState()), setSagenState];
+  return [sagenState, setSagenState];
 }
