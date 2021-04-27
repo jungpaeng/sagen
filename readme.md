@@ -25,24 +25,20 @@ $ yarn add sagen
 
 ## 🏃 Getting started
 
-sagen is a state management library that provides multiple stores without a provider.
+sagen is a state management library that uses a combination of individual repositories without root repositories.
 
-### 1. Create a store
+### 1. Create a repository
 
-You can manage the state by creating a `store`. The store offers the following features:
+You can create a `store` to manage the state. The store offers the following features:
 
-- State change detection when used in React
-- Optimized rendering by custom store state comparison operation
-- Standardize store management with a pattern similar to reducer
+-Detect changes in status when used in React
+-Combine multiple repositories to create one repository
+-Store management standardized with reducer and pattern
+-Store state comparison operation is managed to minimize the operation of unused state
 
 #### 1-a. createStore
 
-Non-function values can be stored in `store`.
-
-params|isRequired|type|return
----|---|---|---
-state|true|Non-function|Store
-middleware|false|Middleware|
+You can display values that are not functions in `store`.
 
 ```typescript
 import { createStore } from 'sagen';
@@ -51,144 +47,169 @@ const numberStore = createStore(0);
 const multipleStore = createStore({ num: 0, str: '' });
 ```
 
-### 2. state value management
+### 2. Status value management
 
-The `state` value must be managed using the `useGlobalStore` Hook so that React can detect it.
-The `useGlobalStore` Hook uses the same method as the `useState` Hook, but works synchronously.
+The `createStore` function returns `getState`,`setState` functions.
 
-`useGlobalStore` returns `[getter, setter]`, and each can be returned using the following Hooks.
+In React, you can use `useGlobalStore`, `useSagenState`, and `useSetSagenState` to manage values.
 
-- getter: useSagenState
-- setter: useSetSagenState
+#### 2-a. useGlobalStore
 
-#### 2-a. useSagenState
+The `useGlobalStore` Hook returns `getter` and `setter` as an array.
 
-`useSagenState` Hook returns `getter` of `store`.
+The usage method is the same as the `React.useState` Hook.
 
-When the returned `getter` value changes, React detects it.
+Changes from other configurations can be received as `getter`.
 
-params|isRequired|type|return
----|---|---|---
-store|true|Store|getter
+```typescript jsx
+import { createStore, useGlobalStore } from 'sagen';
 
-#### 2-b. useSetSagenState
+const store = createStore(0);
 
-`useSetSagenState` Hook returns `setter` of `store`.
-
-React can detect the change only by modifying the value using the returned `setter`.
-
-params|isRequired|type|return
----|---|---|---
-store|true|Store|setter
-
-#### 2-c. useGlobalStore
-
-The `useGlobalStore` Hook returns `getter` and `setter` of `store`.
-
-params|isRequired|type|return
----|---|---|---
-store|true|Store|[getter, setter]
-
-```jsx
-import React from 'react';
-import { useGlobalStore } from 'sagen';
-
-const numberStore = createStore(0);
-
-const App = () => {
-  const [num, setNum] = useGlobalStore(numberStore);
-
+function Test() {
+  const [num, setNum] = useGlobalStore(store);
+  
+  const incrementNum = () => {
+    setNum(curr => curr + 1);
+  };
+  
   return (
     <div>
-      <p>current: {num}</p>
-      <button onClick={() => setNum(100)}>
-        Set 100
-      </button>
-      <button onClick={() => setNum(curr => curr + 1)}>
+      <p>num: {num}</p>
+      <button onClick={incrementNum}>
         Increment
       </button>
     </div>
   );
-};
+}
 ```
 
-#### 2-d. state selector
+#### 2-b. useSagenState
 
-When getting the state value, you can process the state value by passing the `selector` function.
+`useSagenState` Hook returns `getter` of `store`.
 
-Basically, the operator `===` compares the old value to the new value.
+```typescript jsx
+import { createStore, useSagenState } from 'sagen';
 
-It is recommended to use only the values required for `state` as shown below.
+const store = createStore(0);
 
-```jsx
-import React from 'react';
+function Test() {
+  const num = useSagenState(store);
+
+  return (
+    <p>num: {num}</p>
+  );
+}
+```
+
+#### 2-c. useSetSagenState
+
+`useSetSagenState` Hook returns `setter` of `store`.
+
+```typescript jsx
+import { createStore, useSetSagenState } from 'sagen';
+
+const store = createStore(0);
+
+function Test() {
+  const setNum = useSagenState(store);
+
+  const incrementNum = () => {
+    setNum(curr => curr + 1);
+  };
+
+  return (
+    <button onClick={incrementNum}>
+      Increment
+    </button>
+  );
+}
+```
+
+#### 2-1. getter
+
+You can add arguments to `useGlobalStore` and `useSagenState` that return `getter`.
+
+This is used for performance optimization.
+
+##### 2-1-a. selector
+
+You can pass `selector` to `useGlobalStore` and `useSagenState`.
+
+This is mainly used for object stores, and allows you to subscribe only to the desired value of the object values.
+
+The subscribed value only affects `getter`, and `setter` has information about the original value.
+
+Since sagen operates only on the values that the component subscribes to,
+
+it is not recommended to subscribe to values that are not being used.
+
+```typescript jsx
 import { createStore, useGlobalStore } from 'sagen';
 
-const globalStore = createStore({ num: 0, str: '' });
-const numberSelector = state => state.num;
-const stringSelector = state => state.str;
+const infoStore = createStore({
+  name: 'jungpaeng',
+  age: 22,
+});
 
-const NumberChild = () => {
-  const [num, setValue] = useGlobalStore(globalStore, numberSelector);
-  const handleClickBtn = React.useCallback(() => {
-    setValue((curr) => ({
-      ...curr,
-      num: curr.num + 1,
-    }));
-  }, []);
+const ageSelector = store => store.age;
 
-  return (
-    <div className="App">
-      <p>number: {num}</p>
-      <button onClick={handleClickBtn}>Click</button>
-    </div>
-  );
-};
+function Test() {
+  // Pass the ageSelector as the component uses only the age value.
+  const [age, setInfo] = useGlobalStore(infoStore, ageSelector);
 
-const StringChild = () => {
-  const [str] = useGlobalStore(globalStore, stringSelector);
-
-  return (
-    <div className="App">
-      <p>string: {str}</p>
-    </div>
-  );
-};
-
-const App = () => {
-  const [number, setState] = useGlobalStore(globalStore, numberSelector);
+  const incrementAge = () => {
+    setInfo(curr => ({ ...curr, age: curr.age + 1 }));
+  };
 
   return (
     <div>
-      <NumberChild />
-      <StringChild />
+      <p>age: {age}</p>
+      <button onClick={incrementAge}>
+        Increment
+      </button>
     </div>
   );
-};
+}
 ```
 
-#### 2-e. shallowEqual
+##### 2-1-b. equalityFn
 
-For values that cannot be compared with `===`, such as objects or arrays, you can pass the `shallowEqual` function to compare the values.
+You can pass `equalityFn` to `useGlobalStore` and `useSagenState`.
 
-In the case of objects or arrays, you must pass the `shallowEqual` value to optimize React rendering through value comparison.
+Used to detect if a component's subscribed value has changed.
 
-```jsx
-import React from 'react';
+Basically, `===` is used to compare, and `shallowEqual` is provided for comparing arrays, objects, etc.
+
+```typescript jsx
 import { createStore, useGlobalStore, shallowEqual } from 'sagen';
 
-const globalStore = createStore({ num: 0, str: '' });
-const storeSelector = state => state;
+const infoStore = createStore({
+  name: 'jungpaeng',
+  use: 'typescript',
+  age: 22,
+});
 
-const App = () => {
-  const [state, setState] = useGlobalStore(globalStore, storeSelector, shallowEqual);
+const selector = store => ({ name: store.name, age: store.age });
+
+function Test() {
+  // Even if the unsubscribed use value changes, the component does not react.
+  const [info, setInfo] = useGlobalStore(infoStore, selector, shallowEqual);
+
+  const incrementAge = () => {
+    setInfo(curr => ({ ...curr, age: curr.age + 1 }));
+  };
 
   return (
     <div>
-      ...
+      <p>name: {info.name}</p>
+      <p>age: {info.age}</p>
+      <button onClick={incrementAge}>
+        Increment
+      </button>
     </div>
   );
-};
+}
 ```
 
 ### 3. Dispatch
@@ -198,10 +219,6 @@ You can manage it by adding a `action` to the `store` created with the `createSt
 #### 3-a. setAction
 
 Before using `Dispatch`, you need to define `Action`.
-
-params|isRequired|type|return
----|---|---|---
-action|true|(getter) => Action|Array\<keyof Action\>
 
 ```typescript jsx
 const store = createStore(0);
@@ -214,10 +231,6 @@ const storeAction = store.setAction((getter) => ({
 #### 3-a. createDispatch
 
 The `dispatch` function passes the value created through `action` as an argument.
-
-params|isRequired|type|return
----|---|---|---
-store|true|Store|Dispatch
 
 ```typescript jsx
 const store = createStore(0);
@@ -233,32 +246,6 @@ storeDispatch(storeAction.INCREMENT)
 storeDispatch(storeAction.ADD, 100)
 ```
 
-```typescript jsx
-const store = createStore(0);
-const storeDispatch = createDispatch(store);
-const storeAction = store.setAction((getter) => ({
-  INCREMENT: () => getter() + 1,
-  ADD: (num) => getter() + num,
-}));
-
-const App = () => {
-  const [state, setState] = useGlobalStore(store);
-
-  return (
-    <div className="App">
-      <p>number state: {state}</p>
-      <button onClick={() => storeDispatch(storeAction.INCREMENT)}>
-        ClickMe
-      </button>
-      <button onClick={() => storeDispatch(storeAction.ADD, 100)}>
-        ClickMe
-      </button>
-    </div>
-  );
-};
-```
-
-
 ### 4. middleware
 
 **sagen is compatible with Redux middleware.**
@@ -267,7 +254,9 @@ const App = () => {
 
 Here is a simple logger middleware.
 
-You can combine multiple `middleware` using `composeMiddleware`, and pass it to the second argument of `createStore`.
+You can combine multiple `middleware` using `composeMiddleware`,
+
+and pass it to the second argument of `createStore`.
 
 ```ts
 import { createStore, composeMiddleware } from 'sagen';
@@ -280,8 +269,9 @@ const loggerMiddleware = store => next => action => {
 }
 
 const store = createStore(0, composeMiddleware(loggerMiddleware));
-const [state, setState] = useGlobalStore(store);
 
+// In Component ...
+const [state, setState] = useGlobalStore(store);
 setState(1);
 ```
 
@@ -311,6 +301,7 @@ const removeEvent = store.onSubscribe((newState, prevState) => {
   console.log(`prev: ${prevState}, new: ${newState}`);
 });
 
+// In Component ...
 const [state, setState] = useGlobalStore(store);
 setState(1);
 // [console.log] prev: 0, new: 1
@@ -320,6 +311,64 @@ setState(0);
 // [console.log] Empty
 ```
 
+### 6. Store merging
+
+Multiple `stores' can be combined and managed as a single `store`.
+
+If you wish, you can also create and manage a single Root Store.
+
+#### 6-a. composeStore
+
+With `composeStore`, you can group `store` into a single `store`.
+
+The integrated store is in a state of subscribing to the original store.
+
+Changing values in one store affects values in other stores.
+
+```typescript jsx
+import { createStore, composeStore, useGlobalStore } from 'sagen';
+
+const numStoreA = createStore(0);
+const numStoreB = createStore(0);
+
+const { store: numStoreAB } = composeStore({
+  a: numStoreA,
+  b: numStoreB,
+});
+
+function Test() {
+  const [store, setStore] = useGlobalStore(store);
+
+  const incrementA = () => {
+    setStore(curr => ({
+      ...curr,
+      a: curr.a + 1,
+    }));
+  };
+
+  const incrementB = () => {
+    setStore(curr => ({
+      ...curr,
+      b: curr.b + 1,
+    }));
+  };
+
+  return (
+    <div>
+      <p>A num: {store.a}</p>
+      <button onClick={incrementA}>
+        A Increment
+      </button>
+
+      <p>B num: {store.b}</p>
+      <button onClick={incrementB}>
+        B Increment
+      </button>
+    </div>
+  );
+}
+```
+
 ## Using without React
 
 `sagen` can be used without React.
@@ -327,7 +376,7 @@ setState(0);
 Try the [sagen-core](https://www.npmjs.com/package/sagen-core) library.
 
 ## 📜 License
-sagen is released under the [MIT license](https://github.com/jungpaeng/react-manage-global-state/blob/main/LICENSE).
+sagen is released under the [MIT license](https://github.com/jungpaeng/sagen/blob/main/LICENSE).
 
 ```
 Copyright (c) 2020 jungpaeng

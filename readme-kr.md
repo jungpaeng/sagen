@@ -25,24 +25,20 @@ $ yarn add sagen
 
 ## 🏃 시작하기
 
-sagen은 Provider 없이 multiple store를 제공하는 상태 관리 라이브러리입니다.
+sagen는 root store가 없는 각각의 store를 조합해서 사용하는 상태 관리 라이브러리입니다.
 
 ### 1. store 만들기
 
 `store`를 생성해 state를 관리할 수 있습니다. store는 다음 기능을 제공합니다.
 
 - React에서 사용시 state 변화 감지
-- store state 비교 연산 커스텀으로 렌더링 최적화
+- 여러 store를 조합해서 하나의 store를 생성
 - reducer와 유사한 패턴으로 store 관리 정형화
+- store state 비교 연산을 관리하여 사용되지 않는 state의 연산 최소화
 
 #### 1-a. createStore
 
 함수가 아닌 값을 `store`에 저장할 수 있습니다.
-
-params|isRequired|type|return
----|---|---|---
-state|true|함수가 아닌 값|Store
-middleware|false|Middleware|
 
 ```typescript
 import { createStore } from 'sagen';
@@ -53,140 +49,165 @@ const multipleStore = createStore({ num: 0, str: '' });
 
 ### 2. state 값 관리
 
-`state` 값은 `useGlobalStore` Hook을 사용해 관리해야 React에서 감지할 수 있습니다.
-`useGlobalStore` Hook은 `useState` Hook과 사용 방법이 동일하지만, 동기로 동작합니다.
+`createStore` 함수는 `getState`, `setState` 함수를 반환합니다.
 
-`useGlobalStore`은 `[getter, setter]`를 반환하며, 각각 다음 Hook을 사용해서 반환받을 수 있습니다.
+React에서는 `useGlobalStore`, `useSagenState`, `useSetSagenState`를 사용해서 값을 관리할 수 있습니다.
 
-- getter: useSagenState
-- setter: useSetSagenState
+#### 2-a. useGlobalStore
 
-#### 2-a. useSagenState
+`useGlobalStore` Hook은 `getter`와 `setter`를 배열로 반환합니다.
 
-`useSagenState` Hook은 `store`의 `getter`를 반환합니다.
+`React.useState` Hook과 사용 방법이 동일합니다.
 
-반환받은 `getter`는 값이 변하면 React에서 이를 감지합니다.
+다른 컴포넌트에서의 변경사항을 `getter`로 받아올 수 있다는 것만 다릅니다. 
 
-params|isRequired|type|return
----|---|---|---
-store|true|Store|getter
+```typescript jsx
+import { createStore, useGlobalStore } from 'sagen';
 
-#### 2-b. useSetSagenState
+const store = createStore(0);
 
-`useSetSagenState` Hook은 `store`의 `setter`를 반환합니다.
-
-반환받은 `setter`를 사용해 값을 수정해야만 React에서 변화를 감지할 수 있습니다.
-
-params|isRequired|type|return
----|---|---|---
-store|true|Store|setter
-
-#### 2-c. useGlobalStore
-
-`useGlobalStore` Hook은 `store`의 `getter`와 `setter`를 반환합니다.
-
-params|isRequired|type|return
----|---|---|---
-store|true|Store|[getter, setter]
-
-```jsx
-import React from 'react';
-import { useGlobalStore } from 'sagen';
-
-const numberStore = createStore(0);
-
-const App = () => {
-  const [num, setNum] = useGlobalStore(numberStore);
-
+function Test() {
+  const [num, setNum] = useGlobalStore(store);
+  
+  const incrementNum = () => {
+    setNum(curr => curr + 1);
+  };
+  
   return (
     <div>
-      <p>current: {num}</p>
-      <button onClick={() => setNum(100)}>
-        Set 100
-      </button>
-      <button onClick={() => setNum(curr => curr + 1)}>
+      <p>num: {num}</p>
+      <button onClick={incrementNum}>
         Increment
       </button>
     </div>
   );
-};
+}
 ```
 
-#### 2-d. state selector
+#### 2-b. useSagenState
 
-state 값을 가져올 때 `selector` 함수를 넘겨줘서 state 값을 가공할 수 있습니다.
+`useSagenState` Hook은 `store`의 `getter`를 반환합니다.
 
-기본적으로, `===` 연산자로 기존 값과 새로운 값을 비교하기 때문에 아래와 같이 `state`에서 필요한 값만을 사용하는 것이 좋습니다.
+```typescript jsx
+import { createStore, useSagenState } from 'sagen';
 
-```jsx
-import React from 'react';
+const store = createStore(0);
+
+function Test() {
+  const num = useSagenState(store);
+
+  return (
+    <p>num: {num}</p>
+  );
+}
+```
+
+#### 2-c. useSetSagenState
+
+`useSetSagenState` Hook은 `store`의 `setter`를 반환합니다.
+
+```typescript jsx
+import { createStore, useSetSagenState } from 'sagen';
+
+const store = createStore(0);
+
+function Test() {
+  const setNum = useSagenState(store);
+
+  const incrementNum = () => {
+    setNum(curr => curr + 1);
+  };
+
+  return (
+    <button onClick={incrementNum}>
+      Increment
+    </button>
+  );
+}
+```
+
+#### 2-1. getter
+
+`getter`를 반환하는 `useGlobalStore`와 `useSagenState`에 인자를 넘겨 추가적인 기능을 사용할 수 있습니다.
+
+이것은 대부분 퍼포먼스 최적화를 위해 사용됩니다.
+
+##### 2-1-a. selector
+
+`useGlobalStore`와 `useSagenState`에 `selector`를 넘길 수 있습니다.
+
+이는 주로 객체 store에 사용되며, 객체 값 중 원하는 값만을 구독할 수 있도록 합니다.
+
+구독한 값은 `getter`에만 영향을 끼치며, `setter`에서는 원본 값에 대한 정보를 갖고 있습니다.
+
+sagen은 컴포넌트가 구독하고 있는 값에 대해서만 연산을 하므로 사용하지 않는 값이라면 구독하지 않는 것이 좋습니다.
+
+```typescript jsx
 import { createStore, useGlobalStore } from 'sagen';
 
-const globalStore = createStore({ num: 0, str: '' });
-const numberSelector = state => state.num;
-const stringSelector = state => state.str;
+const infoStore = createStore({
+  name: 'jungpaeng',
+  age: 22,
+});
 
-const NumberChild = () => {
-  const [num, setValue] = useGlobalStore(globalStore, numberSelector);
-  const handleClickBtn = React.useCallback(() => {
-    setValue((curr) => ({
-      ...curr,
-      num: curr.num + 1,
-    }));
-  }, []);
+const ageSelector = store => store.age;
 
-  return (
-    <div className="App">
-      <p>number: {num}</p>
-      <button onClick={handleClickBtn}>Click</button>
-    </div>
-  );
-};
+function Test() {
+  // 컴포넌트에서 age 값만을 사용하므로 ageSelector를 넘깁니다.
+  const [age, setInfo] = useGlobalStore(infoStore, ageSelector);
 
-const StringChild = () => {
-  const [str] = useGlobalStore(globalStore, stringSelector);
-
-  return (
-    <div className="App">
-      <p>string: {str}</p>
-    </div>
-  );
-};
-
-const App = () => {
-  const [number, setState] = useGlobalStore(globalStore, numberSelector);
+  const incrementAge = () => {
+    setInfo(curr => ({ ...curr, age: curr.age + 1 }));
+  };
 
   return (
     <div>
-      <NumberChild />
-      <StringChild />
+      <p>age: {age}</p>
+      <button onClick={incrementAge}>
+        Increment
+      </button>
     </div>
   );
-};
+}
 ```
 
-#### 2-e. shallowEqual
+##### 2-1-b. equalityFn
 
-객체 또는 배열 등 `===`로 비교힐 수 없는 값의 경우, `shallowEqual` 함수를 넘겨서 값을 비교할 수 있습니다.
+`useGlobalStore`와 `useSagenState`에 `equalityFn`을 넘길 수 있습니다.
 
-객체 또는 배열의 경우 `shallowEqual` 값을 넘겨야 값 비교를 통한 리액트 렌더링 최적화를 할 수 있습니다.
+컴포넌트의 구독된 값이 변경되었는지 감지하는 데 사용됩니다.
 
-```jsx
-import React from 'react';
+기본적으로 `===`를 사용해서 비교하며, 배열, 객체 등의 비교를 위해 `shallowEqual`을 제공합니다. 
+
+```typescript jsx
 import { createStore, useGlobalStore, shallowEqual } from 'sagen';
 
-const globalStore = createStore({ num: 0, str: '' });
-const storeSelector = state => state;
+const infoStore = createStore({
+  name: 'jungpaeng',
+  use: 'typescript',
+  age: 22,
+});
 
-const App = () => {
-  const [state, setState] = useGlobalStore(globalStore, storeSelector, shallowEqual);
+const selector = store => ({ name: store.name, age: store.age });
+
+function Test() {
+  // 구독하지 않은 use 값이 변하더라도 컴포넌트는 반응하지 않습니다.
+  const [info, setInfo] = useGlobalStore(infoStore, selector, shallowEqual);
+
+  const incrementAge = () => {
+    setInfo(curr => ({ ...curr, age: curr.age + 1 }));
+  };
 
   return (
     <div>
-      ...
+      <p>name: {info.name}</p>
+      <p>age: {info.age}</p>
+      <button onClick={incrementAge}>
+        Increment
+      </button>
     </div>
   );
-};
+}
 ```
 
 ### 3. Dispatch
@@ -196,10 +217,6 @@ const App = () => {
 #### 3-a. setAction
 
 `Dispatch`를 이용하기 전, `Action`을 정의해야 합니다.
-
-params|isRequired|type|return
----|---|---|---
-action|true|(getter) => Action|Array\<keyof Action\>
 
 ```typescript jsx
 const store = createStore(0);
@@ -212,10 +229,6 @@ const storeAction = store.setAction((getter) => ({
 #### 3-a. createDispatch
 
 `dispatch` 함수는 인자로 `action`을 통해 만든 값을 전달합니다.
-
-params|isRequired|type|return
----|---|---|---
-store|true|Store|Dispatch
 
 ```typescript jsx
 const store = createStore(0);
@@ -230,32 +243,6 @@ const storeAction = store.setAction((getter) => ({
 storeDispatch(storeAction.INCREMENT)
 storeDispatch(storeAction.ADD, 100)
 ```
-
-```typescript jsx
-const store = createStore(0);
-const storeDispatch = createDispatch(store);
-const storeAction = store.setAction((getter) => ({
-  INCREMENT: () => getter() + 1,
-  ADD: (num) => getter() + num,
-}));
-
-const App = () => {
-  const [state, setState] = useGlobalStore(store);
-
-  return (
-    <div className="App">
-      <p>number state: {state}</p>
-      <button onClick={() => storeDispatch(storeAction.INCREMENT)}>
-        ClickMe
-      </button>
-      <button onClick={() => storeDispatch(storeAction.ADD, 100)}>
-        ClickMe
-      </button>
-    </div>
-  );
-};
-```
-
 
 ### 4. middleware
 
@@ -277,6 +264,7 @@ const loggerMiddleware = store => next => action => {
   console.log('다음 상태', store.getState());
 }
 
+// 컴포넌트 내부에서..
 const store = createStore(0, composeMiddleware(loggerMiddleware));
 const [state, setState] = useGlobalStore(store);
 
@@ -309,6 +297,7 @@ const removeEvent = store.onSubscribe((newState, prevState) => {
   console.log(`prev: ${prevState}, new: ${newState}`);
 });
 
+// 컴포넌트 내부에서..
 const [state, setState] = useGlobalStore(store);
 setState(1);
 // [console.log] prev: 0, new: 1
@@ -318,6 +307,62 @@ setState(0);
 // [console.log] Empty
 ```
 
+### 6. Store 합치기
+
+여러 `store`를 합쳐 하나의 `store`로 관리할 수 있습니다.
+
+원한다면 하나의 Root Store를 만들어 관리할 수도 있습니다.
+
+#### 6-a. composeStore
+
+`composeStore`로 `store`를 하나의 `store`로 묶을 수 있습니다.
+
+통합된 store는 원본 store와 서로 구독하고 있는 상태입니다. 한 store의 값 변경은 다른 store의 값에 영향을 줍니다.
+
+```typescript jsx
+import { createStore, composeStore, useGlobalStore } from 'sagen';
+
+const numStoreA = createStore(0);
+const numStoreB = createStore(0);
+
+const { store: numStoreAB } = composeStore({
+  a: numStoreA,
+  b: numStoreB,
+});
+
+function Test() {
+  const [store, setStore] = useGlobalStore(store);
+
+  const incrementA = () => {
+    setStore(curr => ({
+      ...curr,
+      a: curr.a + 1,
+    }));
+  };
+
+  const incrementB = () => {
+    setStore(curr => ({
+      ...curr,
+      b: curr.b + 1,
+    }));
+  };
+
+  return (
+    <div>
+      <p>A num: {store.a}</p>
+      <button onClick={incrementA}>
+        A Increment
+      </button>
+
+      <p>B num: {store.b}</p>
+      <button onClick={incrementB}>
+        B Increment
+      </button>
+    </div>
+  );
+}
+```
+
 ## React 없이 사용하기
 
 `sagen`은 React 없이 사용할 수 있습니다.
@@ -325,7 +370,7 @@ setState(0);
 [sagen-core](https://www.npmjs.com/package/sagen-core) 라이브러리를 사용해보세요.
 
 ## 📜 License
-sagen is released under the [MIT license](https://github.com/jungpaeng/react-manage-global-state/blob/main/LICENSE).
+sagen is released under the [MIT license](https://github.com/jungpaeng/sagen/blob/main/LICENSE).
 
 ```
 Copyright (c) 2020 jungpaeng
