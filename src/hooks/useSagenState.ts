@@ -11,13 +11,14 @@ export type SagenState<Selected = never, State = any> = [Selected] extends [neve
 
 export function useSagenState<Selected = never, State = any>(
   store: CreateStore<State>,
-  selector?: (value: State) => any,
+  selector?: (value: State) => Selected,
   equalityFn = defaultEqualityFn,
 ): SagenState<Selected, State> {
   const [, forceUpdate] = React.useReducer((curr: number) => curr + 1, 0) as [never, () => void];
-  const selectedState = React.useCallback((state: State) => (selector ? selector(state) : state), [
-    selector,
-  ]);
+  const selectedState = React.useCallback(
+    (state: State) => (selector ? selector(state) : state) as SagenState<Selected, State>,
+    [selector],
+  );
 
   React.useLayoutEffect(() => {
     // change callback
