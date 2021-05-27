@@ -1,6 +1,6 @@
 {
   "name": "sagen",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Management global state with out provider",
   "main": "index.js",
   "module": "index.esm.js",
