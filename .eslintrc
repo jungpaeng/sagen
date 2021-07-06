@@ -57,7 +57,7 @@
       },
       "alias": {
         "extensions": [".js", ".jsx", ".ts", ".tsx", ".json"],
-        "map": [["zustand", "./src/index.ts"]]
+        "map": [["./src/index.ts"]]
       }
     }
   },
